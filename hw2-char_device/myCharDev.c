@@ -1,5 +1,5 @@
 //==============================================================================
-//Kernel Device: char.c
+//Kernel Device: myCharDev.c
 //Author: Jordan Bergmann
 //
 //Description: A basic char device.
@@ -19,7 +19,7 @@ static dev_t devNode;
 
 int __init chardev_init(void)
 {
-	printk(KERN_INFO "Loading module.\n");
+	printk(KERN_INFO "Loading myCharDev module.\n");
 
 	//Allocate major/minor numbers.
 	if(alloc_chrdev_region(&devNode, 0, NUMDEVS, "myCharDev")){
@@ -35,7 +35,7 @@ void __exit chardev_exit(void)
 	//Clean up.
 	unregister_chrdev_region(devNode, NUMDEVS);
 
-	printk(KERN_INFO "example3 module unloaded!\n");
+	printk(KERN_INFO "myCharDev module unloaded!\n");
 }
 
 MODULE_AUTHOR("Jordan Bergmann");

@@ -1,7 +1,7 @@
 KERNEL_DIR = /lib/modules/$(shell uname -r)/build
 PWD:= $(shell pwd)
 
-obj-m += char.o
+obj-m += myCharDev.o
 
 default:
 	$(MAKE) -C $(KERNEL_DIR) SUBDIRS=$(PWD) modules
