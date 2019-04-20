@@ -19,7 +19,7 @@ static dev_t devNode;
 
 int __init chardev_init(void)
 {
-	printk(KERN_INFO "Loading module.\n"):
+	printk(KERN_INFO "Loading module.\n");
 
 	//Allocate major/minor numbers.
 	if(alloc_chrdev_region(&devNode, 0, NUMDEVS, "myCharDev")){
