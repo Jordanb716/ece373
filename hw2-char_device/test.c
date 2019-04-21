@@ -15,20 +15,16 @@ void main(){
 	char c;
 
 	fp = fopen("/dev/myCharDev", "r+");
-
 	printf("Current value: %d\n", fgetc(fp));
+	fclose(fp);
 
-	rewind(fp);
-
-	printf("Current value: %d\n", fgetc(fp));
-
-	rewind(fp);
-
+	fp = fopen("/dev/myCharDev", "r+");
 	fprintf(fp, "2"); //char 2
+	fclose(fp);
 
-	rewind(fp);
-
+	fp = fopen("/dev/myCharDev", "r+");
 	printf("New value: %d\n", fgetc(fp));
+	fclose(fp);
 
 	fclose(fp);
 
