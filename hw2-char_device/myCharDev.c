@@ -108,31 +108,20 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 
 static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset){
 
-	//Variables
-	int *kern_buf = kmalloc(len, GFP_KERNEL);
-
 	//Make sure our user wasn't bad...
 	if (!buf) {
-		kfree(kern_buf);
 		return -EINVAL; //Invalid input.
 	}
 
-	if (!kern_buf) { //If allocated memory not good.
-		kfree(kern_buf);
-		return -ENOMEM;
-	}
-
 	//Copy from the user-provided buffer
-	if (copy_from_user(kern_buf, buf, len)) {
+	if (copy_from_user(syscal_val, buf, len)) {
 		/* uh-oh... */
-		kfree(kern_buf);
 		return -EFAULT;
 	}
 
 	/* print what userspace gave us */
-	printk(KERN_INFO "Userspace wrote \"%n\" to us\n", &kern_buf);
+	printk(KERN_INFO "Userspace wrote \"%n\" to us\n", &syscal_val);
 
-	kfree(kern_buf);
 	return len;
 
 }
