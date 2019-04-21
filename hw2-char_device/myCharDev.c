@@ -28,7 +28,10 @@ static struct mydev_dev {
 static struct file_operations mydev_fops = {
 	.owner = THIS_MODULE,
 	.open = chardev_open,
+	.read = chardev_read
 };
+
+int syscal_val = 40;
 
 //Initialization
 int __init chardev_init(void)
@@ -75,6 +78,27 @@ static int chardev_open(struct inode *inode, struct file *file)
 	printk(KERN_INFO "pop goes the example!\n");
 
 	return 0;
+}
+
+//Read
+static int chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset)){
+
+	if(*offset >= sizeof(int)){
+		return 0;
+	}
+
+	//Make sure our user wasn't bad...
+	if (!buf) {
+		return -EINVAL; //Invalid input.
+	}
+
+	//Send
+	if(copy_to_user(buf, syscal_val, sizeof(int))) {
+		return -EFAULT; //Send error.
+	}
+
+	*offset += len;
+	return sizeof(int);
 }
 
 MODULE_AUTHOR("Jordan Bergmann");
