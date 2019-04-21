@@ -17,7 +17,7 @@
 
 //Function prototypes
 static int chardev_open(struct inode *inode, struct file *file);
-static int chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset);
+static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset);
 
 //Structs
 static struct mydev_dev {
@@ -35,8 +35,8 @@ static struct file_operations mydev_fops = {
 int syscal_val = 40;
 
 //Initialization
-int __init chardev_init(void)
-{
+int __init chardev_init(void){
+
 	printk(KERN_INFO "Initializing myCharDev module!\n");
 
 	//Allocate major/minor numbers.
@@ -64,8 +64,8 @@ int __init chardev_init(void)
 }
 
 //Exit
-void __exit chardev_exit(void)
-{
+void __exit chardev_exit(void){
+
 	//Clean up.
 	cdev_del(&mydev.cdev);
 	unregister_chrdev_region(mydev.devNode, NUMDEVS);
@@ -74,15 +74,15 @@ void __exit chardev_exit(void)
 }
 
 //Open
-static int chardev_open(struct inode *inode, struct file *file)
-{
+static int chardev_open(struct inode *inode, struct file *file){
+
 	printk(KERN_INFO "pop goes the example!\n");
 
 	return 0;
 }
 
 //Read
-static int chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset){
+static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset){
 
 	if(*offset >= sizeof(int)){
 		return 0;
@@ -99,6 +99,8 @@ static int chardev_read(struct file *file, char __user *buf, size_t len, loff_t 
 	}
 
 	*offset += len;
+
+	printk(KERN_INFO "User got from us %d\n", mydev.sys_int);
 	return sizeof(int);
 }
 
