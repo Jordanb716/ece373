@@ -17,6 +17,7 @@
 
 //Function prototypes
 static int chardev_open(struct inode *inode, struct file *file);
+static int chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset);
 
 //Structs
 static struct mydev_dev {
@@ -81,7 +82,7 @@ static int chardev_open(struct inode *inode, struct file *file)
 }
 
 //Read
-static int chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset)){
+static int chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset){
 
 	if(*offset >= sizeof(int)){
 		return 0;
