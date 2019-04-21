@@ -14,9 +14,15 @@ void main(){
 	FILE* fp;
 	char c;
 
+	printf("1");
+
 	fp = fopen("/dev/myCharDev", "r+");
 
+	printf("2");
+
 	printf("Current value: %c\n", fgetc(fp));
+
+	printf("3");
 
 	fprintf(fp, "7");
 
