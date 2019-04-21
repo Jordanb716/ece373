@@ -18,6 +18,7 @@
 //Function prototypes
 static int chardev_open(struct inode *inode, struct file *file);
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset);
+static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset);
 
 //Structs
 static struct mydev_dev {
@@ -30,6 +31,7 @@ static struct file_operations mydev_fops = {
 	.owner = THIS_MODULE,
 	.open = chardev_open,
 	.read = chardev_read,
+	.write = chardev_write,
 };
 
 int syscal_val = 40;
@@ -102,6 +104,36 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 
 	printk(KERN_INFO "User got from us %d\n", syscal_val);
 	return sizeof(int);
+}
+
+static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset){
+
+	//Variables
+	int *kern_buf = kmalloc(len, GFP_KERNEL);
+
+	//Make sure our user wasn't bad...
+	if (!buf) {
+		kfree(kern_buf);
+		return -EINVAL; //Invalid input.
+	}
+
+	if (!kern_buf) { //If allocated memory not good.
+		kfree(kern_buf);
+		return -ENOMEM;
+	}
+
+	//Copy from the user-provided buffer
+	if (copy_from_user(kern_buf, buf, len)) {
+		/* uh-oh... */
+		kfree(kern_buf);
+		return -EFAULT;
+	}
+
+	/* print what userspace gave us */
+	printk(KERN_INFO "Userspace wrote \"%s\" to us\n", kern_buf);
+
+	return len;
+
 }
 
 MODULE_AUTHOR("Jordan Bergmann");
