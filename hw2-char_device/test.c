@@ -18,11 +18,15 @@ void main(){
 
 	printf("Current value: %d\n", fgetc(fp));
 
+	rewind(fp);
+
 	printf("Current value: %d\n", fgetc(fp));
 
-	//rewind(fp);
+	rewind(fp);
 
 	fprintf(fp, "2"); //char 2
+
+	rewind(fp);
 
 	printf("New value: %d\n", fgetc(fp));
 
