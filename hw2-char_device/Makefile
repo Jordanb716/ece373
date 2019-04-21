@@ -3,8 +3,10 @@ PWD:= $(shell pwd)
 
 obj-m += myCharDev.o
 
-default:
+default: test
 	$(MAKE) -C $(KERNEL_DIR) SUBDIRS=$(PWD) modules
+
+test:
 	gcc test.c -o test
 
 clean:
