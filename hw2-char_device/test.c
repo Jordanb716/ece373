@@ -24,7 +24,7 @@ void main(){
 
 	//rewind(fp);
 
-	fprintf(fp, 50); //char 2
+	fprintf(fp, "2"); //char 2
 
 	printf("3: %d\n", fp);
 
