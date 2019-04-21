@@ -15,31 +15,65 @@
 
 #define NUMDEVS 1
 
-static dev_t devNode;
+static struct mydev_dev {
+	struct cdev cdev;
+	dev_t devNode;
+} mydev;
 
+static struct file_operations mydev_fops = {
+	.owner = THIS_MODULE,
+	.open = chardev_open,
+}fops;
+
+//Initialization
 int __init chardev_init(void)
 {
-	printk(KERN_INFO "Loading myCharDev module.\n");
+	printk(KERN_INFO "Initializing myCharDev module!\n");
 
 	//Allocate major/minor numbers.
-	if(alloc_chrdev_region(&devNode, 0, NUMDEVS, "myCharDev")){
+	if(alloc_chrdev_region(&mydev.devNode, 0, NUMDEVS, "myCharDev")){
 		printk(KERN_ERR "alloc_chrdev_region() failed!\n");
+		return -1;
+	}
+
+	printk(KERN_INFO "Allocated %d devices at major: %d\n", DEVCNT, MAJOR(mydev.devNode));
+
+	//Initialize cdev.
+	cdev_init(&mydev.cdev, fops);
+	mydev.cdev.owner = THIS_MODULE;
+
+	//Add cdev.
+	if(cdev_add(&mydev.cdev, mydev.devNode, NUMDEVS)){
+		printk(KERN_ERR "cdev_add() failed!\n");
+		/* clean up chrdev allocation */
+		unregister_chrdev_region(mydev.mydev_node, DEVCNT);
+
 		return -1;
 	}
 
 	return 0;
 }
 
+//Exit
 void __exit chardev_exit(void)
 {
 	//Clean up.
+	cdev_del(&mydev.cdev);
 	unregister_chrdev_region(devNode, NUMDEVS);
 
 	printk(KERN_INFO "myCharDev module unloaded!\n");
 }
 
+//Open
+static int chardev_open(struct inode *inode, struct file *file)
+{
+	printk(KERN_INFO "pop goes the example!\n");
+
+	return 0;
+}
+
 MODULE_AUTHOR("Jordan Bergmann");
 MODULE_LICENSE("GPL");
-MODULE_VERSION("0.1");
+MODULE_VERSION("0.2");
 module_init(chardev_init);
 module_exit(chardev_exit);
