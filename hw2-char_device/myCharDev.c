@@ -23,7 +23,7 @@ static struct mydev_dev {
 static struct file_operations mydev_fops = {
 	.owner = THIS_MODULE,
 	.open = chardev_open,
-}fops;
+};
 
 //Initialization
 int __init chardev_init(void)
@@ -39,7 +39,7 @@ int __init chardev_init(void)
 	printk(KERN_INFO "Allocated %d devices at major: %d\n", DEVCNT, MAJOR(mydev.devNode));
 
 	//Initialize cdev.
-	cdev_init(&mydev.cdev, fops);
+	cdev_init(&mydev.cdev, mydev_fops);
 	mydev.cdev.owner = THIS_MODULE;
 
 	//Add cdev.
