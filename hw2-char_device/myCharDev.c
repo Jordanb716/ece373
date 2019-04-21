@@ -29,7 +29,7 @@ static struct mydev_dev {
 static struct file_operations mydev_fops = {
 	.owner = THIS_MODULE,
 	.open = chardev_open,
-	.read = chardev_read
+	.read = chardev_read,
 };
 
 int syscal_val = 40;
@@ -94,7 +94,7 @@ static int chardev_read(struct file *file, char __user *buf, size_t len, loff_t 
 	}
 
 	//Send
-	if(copy_to_user(buf, syscal_val, sizeof(int))) {
+	if(copy_to_user(buf, &syscal_val, sizeof(int))) {
 		return -EFAULT; //Send error.
 	}
 
