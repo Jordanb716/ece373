@@ -114,7 +114,7 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 	}
 
 	//Copy from the user-provided buffer
-	if (copy_from_user(syscal_val, buf, len)) {
+	if (copy_from_user(&syscal_val, buf, len)) {
 		/* uh-oh... */
 		return -EFAULT;
 	}
