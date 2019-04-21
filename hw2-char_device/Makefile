@@ -11,3 +11,4 @@ test:
 
 clean:
 	$(MAKE) -C $(KERNEL_DIR) SUBDIRS=$(PWD) clean
+	rm test
