@@ -106,6 +106,7 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 	return sizeof(int);
 }
 
+//Write
 static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset){
 
 	//Make sure our user wasn't bad...
