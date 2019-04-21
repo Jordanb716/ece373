@@ -15,11 +15,16 @@
 
 #define NUMDEVS 1
 
+//Function prototypes
+static int example4_open(struct inode *inode, struct file *file);
+
+//Structs
 static struct mydev_dev {
 	struct cdev cdev;
 	dev_t devNode;
 } mydev;
 
+//Variables
 static struct file_operations mydev_fops = {
 	.owner = THIS_MODULE,
 	.open = chardev_open,
