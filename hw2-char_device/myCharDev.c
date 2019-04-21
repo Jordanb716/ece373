@@ -35,7 +35,7 @@ static struct file_operations mydev_fops = {
 };
 
 int syscal_val = 40;
-module_param(syscal_val, int, 0);
+module_param(syscal_val, int, S_IRUSR | S_IWUSR);
 
 //Initialization
 int __init chardev_init(void){
