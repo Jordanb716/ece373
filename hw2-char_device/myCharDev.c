@@ -51,7 +51,7 @@ int __init chardev_init(void)
 	if(cdev_add(&mydev.cdev, mydev.devNode, NUMDEVS)){
 		printk(KERN_ERR "cdev_add() failed!\n");
 		/* clean up chrdev allocation */
-		unregister_chrdev_region(mydev.mydev_node, NUMDEVS);
+		unregister_chrdev_region(mydev.devNode, NUMDEVS);
 
 		return -1;
 	}
@@ -64,7 +64,7 @@ void __exit chardev_exit(void)
 {
 	//Clean up.
 	cdev_del(&mydev.cdev);
-	unregister_chrdev_region(devNode, NUMDEVS);
+	unregister_chrdev_region(mydev.devNode, NUMDEVS);
 
 	printk(KERN_INFO "myCharDev module unloaded!\n");
 }
