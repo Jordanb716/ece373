@@ -18,7 +18,9 @@ void main(){
 
 	printf("Current value: %c\n", fgetc(fp));
 
-	fprintf(fp, "50"); //char 2
+	rewind(fp);
+
+	fprintf(fp, 50); //char 2
 
 	printf("New value: %c\n", fgetc(fp));
 
