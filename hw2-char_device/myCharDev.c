@@ -120,7 +120,7 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 	}
 
 	/* print what userspace gave us */
-	printk(KERN_INFO "Userspace wrote \"%n\" to us\n", &syscal_val);
+	printk(KERN_INFO "Userspace wrote \"%s\" to us\n", &syscal_val);
 
 	return len;
 
