@@ -16,7 +16,7 @@
 #define NUMDEVS 1
 
 //Function prototypes
-static int example4_open(struct inode *inode, struct file *file);
+static int chardev_open(struct inode *inode, struct file *file);
 
 //Structs
 static struct mydev_dev {
@@ -41,17 +41,17 @@ int __init chardev_init(void)
 		return -1;
 	}
 
-	printk(KERN_INFO "Allocated %d devices at major: %d\n", DEVCNT, MAJOR(mydev.devNode));
+	printk(KERN_INFO "Allocated %d devices at major: %d\n", NUMDEVS, MAJOR(mydev.devNode));
 
 	//Initialize cdev.
-	cdev_init(&mydev.cdev, mydev_fops);
+	cdev_init(&mydev.cdev, &mydev_fops);
 	mydev.cdev.owner = THIS_MODULE;
 
 	//Add cdev.
 	if(cdev_add(&mydev.cdev, mydev.devNode, NUMDEVS)){
 		printk(KERN_ERR "cdev_add() failed!\n");
 		/* clean up chrdev allocation */
-		unregister_chrdev_region(mydev.mydev_node, DEVCNT);
+		unregister_chrdev_region(mydev.mydev_node, NUMDEVS);
 
 		return -1;
 	}
