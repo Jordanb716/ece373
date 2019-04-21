@@ -23,6 +23,5 @@ void main(){
 	printf("New value: %c\n", fgetc(fp));
 
 	fclose(fp);
-	return 0;
 
 }
