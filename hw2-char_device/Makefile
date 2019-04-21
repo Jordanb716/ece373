@@ -7,7 +7,7 @@ default: test
 	$(MAKE) -C $(KERNEL_DIR) SUBDIRS=$(PWD) modules
 
 test:
-	gcc test.c -o test
+	gcc -O0 test.c -o test
 
 clean:
 	$(MAKE) -C $(KERNEL_DIR) SUBDIRS=$(PWD) clean
