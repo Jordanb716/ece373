@@ -14,17 +14,11 @@ void main(){
 	FILE* fp;
 	char c;
 
-	printf("1");
-
 	fp = fopen("/dev/myCharDev", "r+");
-
-	printf("2");
 
 	printf("Current value: %c\n", fgetc(fp));
 
-	printf("3");
-
-	fprintf(fp, "7");
+	fprintf(fp, "50"); //char 2
 
 	printf("New value: %c\n", fgetc(fp));
 
