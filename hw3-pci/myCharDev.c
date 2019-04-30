@@ -56,10 +56,10 @@ static struct pci_driver pci_blinkDriver = {
 	.remove = pci_blinkDriver_remove,
 }
 
-int syscal_val = 40;
-module_param(syscal_val, int, S_IRUSR | S_IWUSR);
+module_param(int, S_IRUSR | S_IWUSR);
 char blinkDriverName[] = DEVNAME;
 
+//========================================
 //Initialization
 int __init chardev_init(void){
 
@@ -96,6 +96,19 @@ int __init chardev_init(void){
 	return 0;
 }
 
+//========================================
+//Exit
+void __exit chardev_exit(void){
+
+	//Clean up.
+	pci_unregister_driver(&pci_blinkDriver);
+	cdev_del(&myDev.cdev);
+	unregister_chrdev_region(myDev.devNode, NUMDEVS);
+
+	printk(KERN_INFO "myCharDev module unloaded!\n");
+}
+
+//========================================
 //Probe
 static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_id* ent){
 
@@ -132,16 +145,15 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 
 }
 
-//Exit
-void __exit chardev_exit(void){
-
-	//Clean up.
-	cdev_del(&myDev.cdev);
-	unregister_chrdev_region(myDev.devNode, NUMDEVS);
-
-	printk(KERN_INFO "myCharDev module unloaded!\n");
+//========================================
+//Remove
+static void pci_blinkdriver_remove(){
+	iounremap(myPci.hw_addr);
+	pci_release_selected_regions(pdev, pci_select_bars(pdev, IO_RESOURCE_MEM));
+	printk(KERN_INFO "Blinky PCI driver removed.\n");
 }
 
+//========================================
 //Open
 static int chardev_open(struct inode *inode, struct file *file){
 
@@ -150,8 +162,11 @@ static int chardev_open(struct inode *inode, struct file *file){
 	return 0;
 }
 
+//========================================
 //Read
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset){
+
+	int val = readl(myPci.hw_addr + 0xE00);
 
 	if(*offset >= sizeof(int)){
 		return 0;
@@ -163,18 +178,21 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 	}
 
 	//Send
-	if(copy_to_user(buf, &syscal_val, sizeof(int))) {
+	if(copy_to_user(buf, &val, sizeof(int))) {
 		return -EFAULT; //Send error.
 	}
 
 	*offset += len;
 
-	printk(KERN_INFO "User got from us %d\n", syscal_val);
+	printk(KERN_INFO "User got from us %d\n", val);
 	return sizeof(int);
 }
 
+//========================================
 //Write
 static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset){
+
+	int val;
 
 	//Make sure our user wasn't bad...
 	if (!buf) {
@@ -182,13 +200,18 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 	}
 
 	//Copy from the user-provided buffer
-	if (copy_from_user(&syscal_val, buf, len)) {
+	if (copy_from_user(&val, buf, len)) {
 		/* uh-oh... */
 		return -EFAULT;
 	}
 
 	/* print what userspace gave us */
-	printk(KERN_INFO "Userspace wrote \"%s\" to us\n", &syscal_val);
+	printk(KERN_INFO "Userspace wrote \"%d\" to us\n", &val);
+
+	//Write to PCI
+	writel(val, myPci.hw_addr + 0xE00);
+
+	printk(KERN_INFO "Sent \"%d\" to device\n", &val);
 
 	return len;
 
