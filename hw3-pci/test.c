@@ -33,7 +33,7 @@ void main(){
 	printf("New value: %d\n", fgetc(fp));
 	fclose(fp);
 
-	msleep(2000);
+	sleep(2);
 
 	if(fp = fopen("/dev/myCharDev", "r+")){
 		printf("open 1 failed");
@@ -47,7 +47,7 @@ void main(){
 	printf("New value: %d\n", fgetc(fp));
 	fclose(fp);
 
-	msleep(2000);
+	sleep(2);
 
 	if(fp = fopen("/dev/myCharDev", "r+")){
 		printf("open 1 failed");
