@@ -19,7 +19,23 @@ void main(){
 	fclose(fp);
 
 	fp = fopen("/dev/myCharDev", "r+");
-	fprintf(fp, "2"); //char 2
+	fprintf(fp, 0);
+	fclose(fp);
+
+	fp = fopen("/dev/myCharDev", "r+");
+	printf("New value: %d\n", fgetc(fp));
+	fclose(fp);
+
+	fp = fopen("/dev/myCharDev", "r+");
+	fprintf(fp, 0);
+	fclose(fp);
+
+	fp = fopen("/dev/myCharDev", "r+");
+	printf("New value: %d\n", fgetc(fp));
+	fclose(fp);
+
+	fp = fopen("/dev/myCharDev", "r+");
+	fprintf(fp, 2);
 	fclose(fp);
 
 	fp = fopen("/dev/myCharDev", "r+");
