@@ -52,7 +52,7 @@ void main(){
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
 		printf("open 6 failed\n");
 	}
-	fprintf(fp, "%d", 2);
+	fprintf(fp, "%d", 5432);
 	fclose(fp);
 
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
