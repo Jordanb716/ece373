@@ -41,7 +41,7 @@ void main(){
 	if(fp = fopen("/dev/myCharDev", "r+")){
 		printf("open 1 failed");
 	}
-	fprintf(fp, 0);
+	fprintf(fp, 1);
 	fclose(fp);
 
 	if(fp = fopen("/dev/myCharDev", "r+")){
