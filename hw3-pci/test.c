@@ -15,48 +15,48 @@ void main(){
 	FILE* fp;
 	char c;
 
-	if(fp = fopen("/dev/myCharDev", "r+")){
-		printf("open 1 failed");
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 1 failed\n");
 	}
 	printf("Current value: %d\n", fgetc(fp));
 	fclose(fp);
 
-	if(fp = fopen("/dev/myCharDev", "r+")){
-		printf("open 1 failed");
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 2 failed\n");
 	}
 	fprintf(fp, 0);
 	fclose(fp);
 
-	if(fp = fopen("/dev/myCharDev", "r+")){
-		printf("open 1 failed");
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 3 failed\n");
 	}
 	printf("New value: %d\n", fgetc(fp));
 	fclose(fp);
 
 	sleep(2);
 
-	if(fp = fopen("/dev/myCharDev", "r+")){
-		printf("open 1 failed");
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 4 failed\n");
 	}
 	fprintf(fp, 1);
 	fclose(fp);
 
-	if(fp = fopen("/dev/myCharDev", "r+")){
-		printf("open 1 failed");
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 5 failed\n");
 	}
 	printf("New value: %d\n", fgetc(fp));
 	fclose(fp);
 
 	sleep(2);
 
-	if(fp = fopen("/dev/myCharDev", "r+")){
-		printf("open 1 failed");
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 6 failed\n");
 	}
 	fprintf(fp, 2);
 	fclose(fp);
 
-	if(fp = fopen("/dev/myCharDev", "r+")){
-		printf("open 1 failed");
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 7 failed\n");
 	}
 	printf("New value: %d\n", fgetc(fp));
 	fclose(fp);
