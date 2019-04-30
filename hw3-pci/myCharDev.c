@@ -23,7 +23,7 @@ static int chardev_open(struct inode *inode, struct file *file);
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset);
 static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset);
 static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_id* ent);
-static void pci_blinkdriver_remove(struct pci_dev* pdev, const struct pci_device_id* ent);
+static void pci_blinkDriver_remove(struct pci_dev* pdev, const struct pci_device_id* ent);
 
 //Structs
 static struct mydev_dev {
@@ -136,7 +136,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	if(!(myPci.hw_addr = ioremap(mmio_start, mmio_len))){
 		printk(KERN_ERR "Ioremap failed.\n");
 		iounmap(myPci.hw_addr);
-		pci_release_selected_regions(pdev, pci_select_bars(pdev, IO_RESOURCE_MEM));
+		pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
 	}
 
 	//Everything seems fine, blinky time.
@@ -148,8 +148,8 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 
 //========================================
 //Remove
-static void pci_blinkdriver_remove(struct pci_dev* pdev, const struct pci_device_id* ent){
-	iounremap(myPci.hw_addr);
+static void pci_blinkDriver_remove(struct pci_dev* pdev, const struct pci_device_id* ent){
+	iounmap(myPci.hw_addr);
 	pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
 	printk(KERN_INFO "Blinky PCI driver removed.\n");
 }
