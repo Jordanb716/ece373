@@ -36,7 +36,7 @@ void main(){
 		printf("New value: %d\n", fgetc(fp));
 		fclose(fp);
 
-		sleep(2);
+		sleep(1);
 	}
 
 
