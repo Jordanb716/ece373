@@ -158,7 +158,7 @@ static void pci_blinkDriver_remove(struct pci_dev* pdev){
 //Open
 static int chardev_open(struct inode *inode, struct file *file){
 
-	printk(KERN_INFO "pop goes the example!\n");
+	printk(KERN_INFO "File opened!\n");
 
 	return 0;
 }
