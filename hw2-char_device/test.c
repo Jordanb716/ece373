@@ -7,6 +7,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/param.h>
+#include <sys/systm.h>
+#include <sys/proc.h>
 
 void main(){
 
@@ -14,34 +18,50 @@ void main(){
 	FILE* fp;
 	char c;
 
-	fp = fopen("/dev/myCharDev", "r+");
+	if(fp = fopen("/dev/myCharDev", "r+")){
+		printf("open 1 failed");
+	}
 	printf("Current value: %d\n", fgetc(fp));
 	fclose(fp);
 
-	fp = fopen("/dev/myCharDev", "r+");
+	if(fp = fopen("/dev/myCharDev", "r+")){
+		printf("open 1 failed");
+	}
 	fprintf(fp, 0);
 	fclose(fp);
 
-	fp = fopen("/dev/myCharDev", "r+");
+	if(fp = fopen("/dev/myCharDev", "r+")){
+		printf("open 1 failed");
+	}
 	printf("New value: %d\n", fgetc(fp));
 	fclose(fp);
 
-	fp = fopen("/dev/myCharDev", "r+");
+	msleep(2000);
+
+	if(fp = fopen("/dev/myCharDev", "r+")){
+		printf("open 1 failed");
+	}
 	fprintf(fp, 0);
 	fclose(fp);
 
-	fp = fopen("/dev/myCharDev", "r+");
+	if(fp = fopen("/dev/myCharDev", "r+")){
+		printf("open 1 failed");
+	}
 	printf("New value: %d\n", fgetc(fp));
 	fclose(fp);
 
-	fp = fopen("/dev/myCharDev", "r+");
+	msleep(2000);
+
+	if(fp = fopen("/dev/myCharDev", "r+")){
+		printf("open 1 failed");
+	}
 	fprintf(fp, 2);
 	fclose(fp);
 
-	fp = fopen("/dev/myCharDev", "r+");
+	if(fp = fopen("/dev/myCharDev", "r+")){
+		printf("open 1 failed");
+	}
 	printf("New value: %d\n", fgetc(fp));
-	fclose(fp);
-
 	fclose(fp);
 
 }
