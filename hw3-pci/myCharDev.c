@@ -23,6 +23,7 @@ static int chardev_open(struct inode *inode, struct file *file);
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset);
 static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset);
 static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_id* ent);
+static void pci_blinkdriver_remove(struct pci_dev* pdev, const struct pci_device_id* ent);
 
 //Structs
 static struct mydev_dev {
@@ -54,9 +55,8 @@ static struct pci_driver pci_blinkDriver = {
 	.id_table = pci_blinkDriverTable,
 	.probe = pci_blinkDriver_probe,
 	.remove = pci_blinkDriver_remove,
-}
+};
 
-module_param(int, S_IRUSR | S_IWUSR);
 char blinkDriverName[] = DEVNAME;
 
 //========================================
@@ -122,9 +122,9 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	printk(KERN_INFO "Barmask: %lx\n", barMask);
 
 	//Reserve BAR areas.
-	if(pci_request_selected_regions(pdev, barMask, blinkDriver_name)){
+	if(pci_request_selected_regions(pdev, barMask, blinkDriverName)){
 		printk(KERN_ERR "Request selected regions failed.\n");
-		pci_release_selected_regions(pdev, pci_select_bars(pdev, IO_RESOURCE_MEM));
+		pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
 	}
 
 	mmio_start = pci_resource_start(pdev, 0);
@@ -135,7 +135,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 
 	if(!(myPci.hw_addr = ioremap(mmio_start, mmio_len))){
 		printk(KERN_ERR "Ioremap failed.\n");
-		iounremap(myPci.hw_addr);
+		iounmap(myPci.hw_addr);
 		pci_release_selected_regions(pdev, pci_select_bars(pdev, IO_RESOURCE_MEM));
 	}
 
@@ -143,13 +143,14 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	myDev.led_initial_val = readl(myPci.hw_addr + 0xE00);
 	printk(KERN_INFO "Initial value is: %lx\n", myDev.led_initial_val);
 
+	return 0;
 }
 
 //========================================
 //Remove
-static void pci_blinkdriver_remove(){
+static void pci_blinkdriver_remove(struct pci_dev* pdev, const struct pci_device_id* ent){
 	iounremap(myPci.hw_addr);
-	pci_release_selected_regions(pdev, pci_select_bars(pdev, IO_RESOURCE_MEM));
+	pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
 	printk(KERN_INFO "Blinky PCI driver removed.\n");
 }
 
