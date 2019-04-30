@@ -24,7 +24,7 @@ void main(){
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
 		printf("open 2 failed\n");
 	}
-	fprintf(fp, 0);
+	fprintf(fp, "%d", 0);
 	fclose(fp);
 
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
@@ -38,7 +38,7 @@ void main(){
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
 		printf("open 4 failed\n");
 	}
-	fprintf(fp, 1);
+	fprintf(fp, "%d", 1);
 	fclose(fp);
 
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
@@ -52,7 +52,7 @@ void main(){
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
 		printf("open 6 failed\n");
 	}
-	fprintf(fp, 2);
+	fprintf(fp, "%d", 2);
 	fclose(fp);
 
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
