@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define MAX 20
+#define MAX 10
 
 void main(){
 
