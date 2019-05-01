@@ -18,7 +18,7 @@ void main(){
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
 		printf("open 1 failed\n");
 	}
-	printf("Current value: %d\n", fgets(, 20, fp));
+	printf("Current value: %d\n", fgets(void, 20, fp));
 	fclose(fp);
 
 
@@ -33,7 +33,7 @@ void main(){
 		if(!(fp = fopen("/dev/myCharDev", "r+"))){
 			printf("open 3 failed\n");
 		}
-		printf("New value: %d\n", fgets(, 20, fp));
+		printf("New value: %d\n", fgets(void, 20, fp));
 		fclose(fp);
 
 		sleep(1);
