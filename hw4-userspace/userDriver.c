@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <sys/mman.h>
 
@@ -25,7 +26,7 @@ void main(){
 	fp = open("/dev/mem", O_RDWR);
 
 	//Map e1000e region.
-	deviceAddr = mmap(NULL, LENGTH, PROT_READ | PROT_WRITE, MAP_SHARED, fp, BAR);
+	deviceAddr = mmap(NULL, LENGTH, PROT_READ | PROT_WRITE, MAP_SHARED, (int)fp, BAR);
 
 	if(deviceAddr == MAP_FAILED){
 		printf("Mapping failed!\n");
@@ -34,7 +35,7 @@ void main(){
 	}
 
 	//Add offset.
-	ledAddr = deviceAddr + OFFSET;
+	ledAddr = (uint32_t*)(deviceAddr + OFFSET);
 
 	//Read current value and print.
 	printf("Current value: %x\n", *ledAddr);
