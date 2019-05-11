@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/mman.h>
 
 #define BAR 0xF0000000
@@ -14,7 +15,7 @@
 #define OFFSET 0x00E00
 
 void main(){
-	
+
 	//Variables
 	FILE* fp;
 	void* deviceAddr;
