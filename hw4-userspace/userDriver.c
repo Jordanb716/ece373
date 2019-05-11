@@ -54,13 +54,13 @@ void main(){
 	printf("Current value: %x\n", *ledAddr);
 
 	//Turn LED off.
-	*ledAddr = *ledAddr | LED0_MODE_OFF;
+	*ledAddr = *ledAddr | (LED0_MODE_OFF);
 	printf("Off value: %x\n", *ledAddr);
 
 	sleep(1);
 
 	//Turn LED on.
-	*ledAddr = *ledAddr ^ ~LED0_MODE_ON;
+	*ledAddr = *ledAddr ^ (~LED0_MODE_ON);
 	printf("On value: %x\n", *ledAddr);
 
 	sleep(1);
