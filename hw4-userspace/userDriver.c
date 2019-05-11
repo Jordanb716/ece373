@@ -48,28 +48,28 @@ void main(){
 
 	//Add offset.
 	ledAddr = (uint32_t*)(deviceAddr + OFFSET);
-	printf("Full BAR: %d\n", (uint32_t)deviceAddr);
-	printf("LEDCTL: %d\n", (uint32_t)ledAddr);
+	printf("Full BAR: %X\n", (uint32_t)deviceAddr);
+	printf("LEDCTL: %X\n", (uint32_t)ledAddr);
 
 	//Read current value and print.
 	ledInit = *ledAddr;
-	printf("Initial value: %x\n", *ledAddr);
+	printf("Initial value: %X\n", *ledAddr);
 
 	//Turn LED off.
 	*ledAddr = LED0_MODE_OFF;
-	printf("Off value: %x\n", *ledAddr);
+	printf("Off value: %X\n", *ledAddr);
 
 	sleep(1);
 
 	//Turn LED on.
 	*ledAddr = LED0_MODE_ON;
-	printf("On value: %x\n", *ledAddr);
+	printf("On value: %X\n", *ledAddr);
 
 	sleep(1);
 
 	//Restore initial value.
 	*ledAddr = ledInit;
-	printf("Restored value: %x\n", *ledAddr);
+	printf("Restored value: %X\n", *ledAddr);
 
 	//Unmap memory and close file.
 	munmap(deviceAddr, LENGTH);
