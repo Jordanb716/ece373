@@ -18,8 +18,8 @@
 #define LENGTH 128000
 #define OFFSET 0x00E00
 
-#define LED0_MODE_ON 0xF00
-#define LED0_MODE_OFF 0xE00
+#define LED_MODE_ON 0xF
+#define LED_MODE_OFF 0xE
 
 void main(){
 
@@ -56,12 +56,12 @@ void main(){
 	printf("Initial value:	%X\n", *ledAddr);
 
 	//Turn LEDs off.
-	*ledAddr = (LED0_MODE_OFF)|(LED0_MODE_OFF<<8)|(LED0_MODE_OFF<<16)|(LED0_MODE_OFF<<24);
+	*ledAddr = (memFileLED_MODE_OFF)|(memFileLED_MODE_OFF<<8)|(memFileLED_MODE_OFF<<16)|(memFileLED_MODE_OFF<<24);
 	printf("Off value:	%X\n", *ledAddr);
 	sleep(1);
 
 	//Turn LED on.
-	*ledAddr = (LED0_MODE_ON)|(LED0_MODE_ON<<8)|(LED0_MODE_ON<<16)|(LED0_MODE_ON<<24);
+	*ledAddr = (memFileLED_MODE_ON)|(memFileLED_MODE_ON<<8)|(memFileLED_MODE_ON<<16)|(memFileLED_MODE_ON<<24);
 	printf("On value:	%X\n", *ledAddr);
 	sleep(1);
 
