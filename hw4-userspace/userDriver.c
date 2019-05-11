@@ -18,8 +18,8 @@
 #define LENGTH 128000
 #define OFFSET 0x00E00
 
-#define LED0_MODE_ON 0b1110
-#define LED0_MODE_OFF 0b1111
+#define LED0_MODE_ON 0xF00
+#define LED0_MODE_OFF 0xE00
 
 void main(){
 
