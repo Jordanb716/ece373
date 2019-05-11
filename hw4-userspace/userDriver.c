@@ -10,6 +10,9 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define BAR 0xF0000000
 #define LENGTH 128000
