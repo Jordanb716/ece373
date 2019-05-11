@@ -65,6 +65,10 @@ void main(){
 
 	sleep(1);
 
+	//stupid test
+	*ledAddr = 0;
+	sleep(1);
+
 	//Restore initial value.
 	*ledAddr = ledInit;
 	printf("Restored value: %x\n", *ledAddr);
