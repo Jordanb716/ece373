@@ -18,10 +18,14 @@
 #define LENGTH 128000
 #define OFFSET 0x00E00
 
+#define LED0_MODE_ON 0x1110
+#define LED0_MODE_OFF 0x1111
+
 void main(){
 
 	//Variables
 	int memFile;
+	int ledInit;
 	uint32_t* deviceAddr;
 	uint32_t* ledAddr;
 
@@ -41,10 +45,21 @@ void main(){
 	ledAddr = (uint32_t*)(deviceAddr + OFFSET);
 
 	//Read current value and print.
+	ledInit = *ledAddr;
 	printf("Current value: %x\n", *ledAddr);
 
-	//Invert LED.
-	*ledAddr = *ledAddr ^ 0x0040;
+	//Turn LED on.
+	*ledAddr = *ledAddr ^ LED0_MODE_ON;
+
+	sleep(1);
+
+	//Turn LED off.
+	*ledAddr = *ledAddr ^ LED0_MODE_OFF;
+
+	sleep(1);
+
+	//Restore initial value.
+	*ledAddr = ledInit;
 
 	//Unmap memory and close file.
 	munmap(deviceAddr, LENGTH);
