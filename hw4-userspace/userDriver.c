@@ -21,15 +21,15 @@
 void main(){
 
 	//Variables
-	FILE* fp;
+	int memFile;
 	uint32_t* deviceAddr;
 	uint32_t* ledAddr;
 
-	//Open memory.
-	fp = open("/dev/mem", O_RDWR);
+	//Open memFile.
+	memFile = open("/dev/mem", O_RDWR);
 
 	//Map e1000e region.
-	deviceAddr = mmap(NULL, LENGTH, PROT_READ | PROT_WRITE, MAP_SHARED, (int)fp, BAR);
+	deviceAddr = mmap(NULL, LENGTH, PROT_READ | PROT_WRITE, MAP_SHARED, memFile, BAR);
 
 	if(deviceAddr == MAP_FAILED){
 		printf("Mapping failed!\n");
@@ -46,9 +46,9 @@ void main(){
 	//Invert LED.
 	*ledAddr = *ledAddr ^ 0x0040;
 
-	//Unmap Memory and close file.
+	//Unmap memory and close file.
 	munmap(deviceAddr, LENGTH);
-	close(fp);
+	close(memFile);
 
 	return;
 
