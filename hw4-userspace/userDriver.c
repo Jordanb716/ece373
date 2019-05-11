@@ -55,16 +55,14 @@ void main(){
 	ledInit = *ledAddr;
 	printf("Initial value:	%X\n", *ledAddr);
 
-	//Turn LED off.
-	*ledAddr = LED0_MODE_OFF;
+	//Turn LEDs off.
+	*ledAddr = (LED0_MODE_OFF<<0)|(LED0_MODE_OFF<<8)|(LED0_MODE_OFF<<16)|(LED0_MODE_OFF<<24);
 	printf("Off value:	%X\n", *ledAddr);
-
 	sleep(1);
 
 	//Turn LED on.
-	*ledAddr = LED0_MODE_ON;
+	*ledAddr = (LED0_MODE_ON<<0)|(LED0_MODE_ON<<8)|(LED0_MODE_ON<<16)|(LED0_MODE_ON<<24);
 	printf("On value:	%X\n", *ledAddr);
-
 	sleep(1);
 
 	//Restore initial value.
