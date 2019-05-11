@@ -19,8 +19,8 @@ void main(){
 
 	//Variables
 	FILE* fp;
-	void* deviceAddr;
-	void* ledAddr;
+	uint32_t* deviceAddr;
+	uint32_t* ledAddr;
 
 	//Open memory.
 	fp = open("/dev/mem", O_RDWR);
