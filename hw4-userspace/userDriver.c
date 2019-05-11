@@ -48,8 +48,8 @@ void main(){
 
 	//Add offset.
 	ledAddr = (uint32_t*)(deviceAddr + OFFSET);
-	printf("Full BAR:	%X\n", (uint32_t)deviceAddr);
-	printf("LEDCTL:		%X\n", (uint32_t)ledAddr);
+	printf("Full BAR:	%X\n", deviceAddr);
+	printf("LEDCTL:		%X\n", ledAddr);
 
 	//Read current value and print.
 	ledInit = *ledAddr;
