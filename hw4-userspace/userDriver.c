@@ -51,22 +51,18 @@ void main(){
 
 	//Read current value and print.
 	ledInit = *ledAddr;
-	printf("Current value: %x\n", *ledAddr);
+	printf("Initial value: %x\n", *ledAddr);
 
 	//Turn LED off.
-	*ledAddr = *ledAddr | (LED0_MODE_OFF);
+	*ledAddr = LED0_MODE_OFF;
 	printf("Off value: %x\n", *ledAddr);
 
 	sleep(1);
 
 	//Turn LED on.
-	*ledAddr = *ledAddr ^ (0b0001);
+	*ledAddr = LED0_MODE_ON;
 	printf("On value: %x\n", *ledAddr);
 
-	sleep(1);
-
-	//stupid test
-	*ledAddr = 0;
 	sleep(1);
 
 	//Restore initial value.
