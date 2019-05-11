@@ -14,7 +14,7 @@
 #define OFFSET 0x00E00
 
 void main(){
-
+	
 	//Variables
 	FILE* fp;
 	void* deviceAddr;
