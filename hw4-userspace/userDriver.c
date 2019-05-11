@@ -69,16 +69,16 @@ void main(){
 	//Loop 5 times turning each LED on for one second.
 	for(int x = 0; x < 5; x++){
 		*ledAddr = (LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24);
-		leep(1);
+		sleep(1);
 
 		*ledAddr = (LED_MODE_OFF)|(LED_MODE_ON<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24);
-		leep(1);
+		sleep(1);
 
 		*ledAddr = (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24);
-		leep(1);
+		sleep(1);
 
 		*ledAddr = (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_ON<<24);
-		leep(1);
+		sleep(1);
 	}
 
 	//Restore initial value.
