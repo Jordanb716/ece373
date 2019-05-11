@@ -16,7 +16,8 @@
 
 #define BAR 0xF0000000
 #define LENGTH 128000
-#define OFFSET 0x00E00
+#define LEDOFFSET 0x00E00
+#define GPRCOFFSET 0x04074
 
 #define LED_MODE_ON 0xF
 #define LED_MODE_OFF 0xE
@@ -28,6 +29,7 @@ void main(){
 	int ledInit;
 	uint32_t* deviceAddr;
 	uint32_t* ledAddr;
+	uint32_t* GPRCAddr;
 
 	//Open memFile.
 	memFile = open("/dev/mem", O_RDWR);
@@ -47,7 +49,8 @@ void main(){
 	}
 
 	//Add offset.
-	ledAddr = (uint32_t*)(deviceAddr + (OFFSET/4));
+	ledAddr = (uint32_t*)(deviceAddr + (LEDOFFSET/4));
+	GPRCAddr = (uint32_t*)(deviceAddr + (GPRCOFFSET/4));
 	printf("Full BAR:	%X\n", deviceAddr);
 	printf("LEDCTL:		%X\n", ledAddr);
 
@@ -55,19 +58,35 @@ void main(){
 	ledInit = *ledAddr;
 	printf("Initial value:	%X\n", *ledAddr);
 
+	//Turn on LEDs 0 and 2 for 2 seconds.
+	*ledAddr = (LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24);
+	sleep(2);
+
 	//Turn LEDs off.
 	*ledAddr = (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24);
-	printf("Off value:	%X\n", *ledAddr);
-	sleep(1);
+	sleep(2);
 
-	//Turn LED on.
-	*ledAddr = (LED_MODE_ON)|(LED_MODE_ON<<8)|(LED_MODE_ON<<16)|(LED_MODE_ON<<24);
-	printf("On value:	%X\n", *ledAddr);
-	sleep(1);
+	//Loop 5 times turning each LED on for one second.
+	for(int x = 0; x < 5; x++){
+		*ledAddr = (LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24);
+		leep(1);
+
+		*ledAddr = (LED_MODE_OFF)|(LED_MODE_ON<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24);
+		leep(1);
+
+		*ledAddr = (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24);
+		leep(1);
+
+		*ledAddr = (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_ON<<24);
+		leep(1);
+	}
 
 	//Restore initial value.
 	*ledAddr = ledInit;
 	printf("Restored value:	%X\n", *ledAddr);
+
+	//Print good packets received.
+	printf("Good packets received:	%d\n", *GPRCAddr);
 
 	//Unmap memory and close file.
 	munmap(deviceAddr, LENGTH);
