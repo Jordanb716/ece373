@@ -56,12 +56,12 @@ void main(){
 	printf("Initial value:	%X\n", *ledAddr);
 
 	//Turn LEDs off.
-	*ledAddr = (memFileLED_MODE_OFF)|(memFileLED_MODE_OFF<<8)|(memFileLED_MODE_OFF<<16)|(memFileLED_MODE_OFF<<24);
+	*ledAddr = (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24);
 	printf("Off value:	%X\n", *ledAddr);
 	sleep(1);
 
 	//Turn LED on.
-	*ledAddr = (memFileLED_MODE_ON)|(memFileLED_MODE_ON<<8)|(memFileLED_MODE_ON<<16)|(memFileLED_MODE_ON<<24);
+	*ledAddr = (LED_MODE_ON)|(LED_MODE_ON<<8)|(LED_MODE_ON<<16)|(LED_MODE_ON<<24);
 	printf("On value:	%X\n", *ledAddr);
 	sleep(1);
 
