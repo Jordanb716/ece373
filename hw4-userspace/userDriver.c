@@ -55,16 +55,19 @@ void main(){
 
 	//Turn LED off.
 	*ledAddr = *ledAddr | LED0_MODE_OFF;
+	printf("Off value: %x\n", *ledAddr);
 
 	sleep(1);
 
 	//Turn LED on.
 	*ledAddr = *ledAddr ^ !LED0_MODE_ON;
+	printf("On value: %x\n", *ledAddr);
 
 	sleep(1);
 
 	//Restore initial value.
 	*ledAddr = ledInit;
+	printf("Restored value: %x\n", *ledAddr);
 
 	//Unmap memory and close file.
 	munmap(deviceAddr, LENGTH);
