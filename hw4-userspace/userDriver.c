@@ -60,7 +60,7 @@ void main(){
 	sleep(1);
 
 	//Turn LED on.
-	*ledAddr = *ledAddr ^ (~LED0_MODE_ON);
+	*ledAddr = *ledAddr ^ (0b0001);
 	printf("On value: %x\n", *ledAddr);
 
 	sleep(1);
