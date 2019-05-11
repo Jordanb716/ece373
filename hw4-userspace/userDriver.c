@@ -32,6 +32,11 @@ void main(){
 	//Open memFile.
 	memFile = open("/dev/mem", O_RDWR);
 
+	if(memFile == -1){
+		printf("Open failed!\n");
+		return;
+	}
+
 	//Map e1000e region.
 	deviceAddr = mmap(NULL, LENGTH, PROT_READ | PROT_WRITE, MAP_SHARED, memFile, BAR);
 
@@ -48,13 +53,13 @@ void main(){
 	ledInit = *ledAddr;
 	printf("Current value: %x\n", *ledAddr);
 
-	//Turn LED on.
-	*ledAddr = *ledAddr ^ LED0_MODE_ON;
+	//Turn LED off.
+	*ledAddr = *ledAddr | LED0_MODE_OFF;
 
 	sleep(1);
 
-	//Turn LED off.
-	*ledAddr = *ledAddr ^ LED0_MODE_OFF;
+	//Turn LED on.
+	*ledAddr = *ledAddr ^ !LED0_MODE_ON;
 
 	sleep(1);
 
