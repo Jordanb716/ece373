@@ -53,11 +53,11 @@ void main(){
 	ledAddr = (uint32_t*)(deviceAddr + (LED_OFFSET/4));
 	GPRCAddr = (uint32_t*)(deviceAddr + (GPRC_OFFSET/4));
 	printf("Full BAR:	%X\n", deviceAddr);
-	printf("LEDCTL:		%X\n", ledAddr);
+	printf("LEDCTL:		%X\n\n", ledAddr);
 
 	//Read current value and print.
 	ledInit = *ledAddr;
-	printf("Initial value:	%X\n", *ledAddr);
+	printf("Initial value:	%X\n\n", *ledAddr);
 
 	//Turn on LEDs 0 and 2 for 2 seconds.
 	printf("Turning on LEDs 0 and 2...\n");
@@ -87,7 +87,7 @@ void main(){
 
 	//Restore initial value.
 	*ledAddr = ledInit;
-	printf("Restored value:	%X\n", *ledAddr);
+	printf("\nRestored value:	%X\n", *ledAddr);
 
 	//Print good packets received.
 	printf("Good packets received:	%d\n", *GPRCAddr);
