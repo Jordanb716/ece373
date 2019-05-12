@@ -16,8 +16,9 @@
 
 #define BAR 0xF0000000
 #define LENGTH 128000
-#define LEDOFFSET 0x00E00
-#define GPRCOFFSET 0x04074
+#define LED_OFFSET 0x00E00
+#define GPRC_OFFSET 0x04074
+#define RCTL_OFFSET 0x00100
 
 #define LED_MODE_ON 0xF
 #define LED_MODE_OFF 0xE
@@ -30,6 +31,7 @@ void main(){
 	uint32_t* deviceAddr;
 	uint32_t* ledAddr;
 	uint32_t* GPRCAddr;
+	uint32_t* RCTLAddr;
 
 	//Open memFile.
 	memFile = open("/dev/mem", O_RDWR);
@@ -49,10 +51,14 @@ void main(){
 	}
 
 	//Add offset.
-	ledAddr = (uint32_t*)(deviceAddr + (LEDOFFSET/4));
-	GPRCAddr = (uint32_t*)(deviceAddr + (GPRCOFFSET/4));
+	ledAddr = (uint32_t*)(deviceAddr + (LED_OFFSET/4));
+	GPRCAddr = (uint32_t*)(deviceAddr + (GPRC_OFFSET/4));
+	RCTLAddr = (uint32_t*)(deviceAddr + (RCTL_OFFSET/4));
 	printf("Full BAR:	%X\n", deviceAddr);
 	printf("LEDCTL:		%X\n", ledAddr);
+
+	//Enable LPE for GPRC
+	*RCTL_OFFSET = *RCTL_OFFSET | 0b100000;
 
 	//Read current value and print.
 	ledInit = *ledAddr;
