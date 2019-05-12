@@ -59,14 +59,17 @@ void main(){
 	printf("Initial value:	%X\n", *ledAddr);
 
 	//Turn on LEDs 0 and 2 for 2 seconds.
+	printf("Turning on LEDs 0 and 2...\n");
 	*ledAddr = (LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24);
 	sleep(2);
 
 	//Turn LEDs off.
+	printf("Turning LEDs off...\n");
 	*ledAddr = (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24);
 	sleep(2);
 
 	//Loop 5 times turning each LED on for one second.
+	printf("Looping LEDs...\n");
 	for(int x = 0; x < 5; x++){
 		*ledAddr = (LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24);
 		sleep(1);
