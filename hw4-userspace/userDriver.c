@@ -58,7 +58,7 @@ void main(){
 	printf("LEDCTL:		%X\n", ledAddr);
 
 	//Enable LPE for GPRC
-	*RCTL_OFFSET = *RCTL_OFFSET | 0b100000;
+	*RCTLAddr = *RCTLAddr | 0b100000;
 
 	//Read current value and print.
 	ledInit = *ledAddr;
