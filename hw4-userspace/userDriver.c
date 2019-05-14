@@ -30,7 +30,6 @@ void main(){
 	uint32_t* deviceAddr;
 	uint32_t* ledAddr;
 	uint32_t* GPRCAddr;
-	uint32_t* RCTLAddr;
 
 	//Open memFile.
 	memFile = open("/dev/mem", O_RDWR);
@@ -54,6 +53,7 @@ void main(){
 	GPRCAddr = (uint32_t*)(deviceAddr + (GPRC_OFFSET/4));
 	printf("Full BAR:	%X\n", deviceAddr);
 	printf("LEDCTL:		%X\n\n", ledAddr);
+	printf("GPRCAddr:		%X\n\n", GPRCAddr);
 
 	//Read current value and print.
 	ledInit = *ledAddr;
