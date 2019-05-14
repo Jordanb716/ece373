@@ -53,7 +53,6 @@ void main(){
 	GPRCAddr = (uint32_t*)(deviceAddr + (GPRC_OFFSET/4));
 	printf("Full BAR:	%X\n", deviceAddr);
 	printf("LEDCTL:		%X\n\n", ledAddr);
-	printf("GPRCAddr:		%X\n\n", GPRCAddr);
 
 	//Read current value and print.
 	ledInit = *ledAddr;
@@ -87,10 +86,10 @@ void main(){
 
 	//Restore initial value.
 	*ledAddr = ledInit;
-	printf("\nRestored value:	%X\n", *ledAddr);
+	printf("\nRestored value: %X\n", *ledAddr);
 
 	//Print good packets received.
-	printf("Good packets received:	%d\n", *GPRCAddr);
+	printf("Good packets received: %d\n", *GPRCAddr);
 
 	//Unmap memory and close file.
 	munmap(deviceAddr, LENGTH);
