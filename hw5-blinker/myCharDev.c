@@ -17,7 +17,7 @@
 
 #define NUMDEVS 1
 #define DEVNAME "blinky"
-#define NODENAME = "led_dev"
+#define NODENAME "led_dev"
 
 //Function prototypes
 static int chardev_open(struct inode *inode, struct file *file);
