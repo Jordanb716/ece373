@@ -77,10 +77,19 @@ int __init chardev_init(void){
 	cdev_init(&myDev.cdev, &mydev_fops);
 	myDev.cdev.owner = THIS_MODULE;
 
+	//Add cdev to kernel
+	if(cdev_add(&myDev.cdev, myDev.devNode, NUMDEVS)){
+		printk(KERN_ERR "cdev_add() failed!\n");
+		cdev_del(&myDev.cdev);
+		unregister_chrdev_region(myDev.devNode, NUMDEVS);
+		return -1;
+	}
+
 	//Add cdev.
 	if(cdev_add(&myDev.cdev, myDev.devNode, NUMDEVS)){
 		printk(KERN_ERR "cdev_add() failed!\n");
 		/* clean up chrdev allocation */
+		cdev_del(&myDev.cdev);
 		unregister_chrdev_region(myDev.devNode, NUMDEVS);
 		return -1;
 	}
@@ -89,6 +98,7 @@ int __init chardev_init(void){
 	if(pci_register_driver(&pci_blinkDriver)){
 		printk(KERN_ERR "PCI registration failed.\n");
 		pci_unregister_driver(&pci_blinkDriver);
+		cdev_del(&myDev.cdev);
 		unregister_chrdev_region(myDev.devNode, NUMDEVS);
 		return -1;
 	}
@@ -140,7 +150,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	}
 
 	//Everything seems fine, blinky time.
-	myDev.led_initial_val = readl(myPci.hw_addr + 0xE00);
+	myDev.led_initial_val = readl(myPci.hw_addr + 0x00E00);
 	printk(KERN_INFO "Initial value is: %lx\n", myDev.led_initial_val);
 
 	return 0;
@@ -168,6 +178,9 @@ static int chardev_open(struct inode *inode, struct file *file){
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset){
 
 	int val = readl(myPci.hw_addr + 0xE00);
+
+	printk(KERN_INFO "base: %d\n", myPci.hw_addr);
+	printk(KERN_INFO "base + offset: %d\n", (myPci.hw_addr + 0xE00));
 
 	if(*offset >= sizeof(int)){
 		return 0;
