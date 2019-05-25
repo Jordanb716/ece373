@@ -17,6 +17,7 @@
 
 #define NUMDEVS 1
 #define DEVNAME "blinky"
+#define NODENAME = "led_dev"
 
 //Function prototypes
 static int chardev_open(struct inode *inode, struct file *file);
@@ -30,7 +31,7 @@ static struct mydev_dev {
 	struct cdev cdev;
 	dev_t devNode;
 	long led_initial_val;
-	struct class;
+	struct class* class;
 } myDev;
 
 static struct myPci{
@@ -91,7 +92,7 @@ int __init chardev_init(void){
 	}
 
 	//Create dev node
-	if((myDev.class = class_create(THIS_MODULE, "led_dev")) == NULL){
+	if((myDev.class = class_create(THIS_MODULE, NODENAME)) == NULL){
 		printk(KERN_ERR "class_create failed!\n");
 		goto destroy_class;
 	}
