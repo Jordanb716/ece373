@@ -30,6 +30,7 @@ static struct mydev_dev {
 	struct cdev cdev;
 	dev_t devNode;
 	long led_initial_val;
+	struct class;
 } myDev;
 
 static struct myPci{
@@ -68,7 +69,7 @@ int __init chardev_init(void){
 	//Allocate major/minor numbers.
 	if(alloc_chrdev_region(&myDev.devNode, 0, NUMDEVS, "myCharDev")){
 		printk(KERN_ERR "alloc_chrdev_region() failed!\n");
-		return -1;
+		goto unreg_region;
 	}
 
 	printk(KERN_INFO "Allocated %d devices at major: %d\n", NUMDEVS, MAJOR(myDev.devNode));
@@ -77,33 +78,41 @@ int __init chardev_init(void){
 	cdev_init(&myDev.cdev, &mydev_fops);
 	myDev.cdev.owner = THIS_MODULE;
 
-	//Add cdev to kernel
-	if(cdev_add(&myDev.cdev, myDev.devNode, NUMDEVS)){
-		printk(KERN_ERR "cdev_add() failed!\n");
-		cdev_del(&myDev.cdev);
-		unregister_chrdev_region(myDev.devNode, NUMDEVS);
-		return -1;
-	}
-
 	//Add cdev.
 	if(cdev_add(&myDev.cdev, myDev.devNode, NUMDEVS)){
 		printk(KERN_ERR "cdev_add() failed!\n");
-		/* clean up chrdev allocation */
-		cdev_del(&myDev.cdev);
-		unregister_chrdev_region(myDev.devNode, NUMDEVS);
-		return -1;
+		goto del_cdev;
 	}
 
 	//Register as pci driver.
 	if(pci_register_driver(&pci_blinkDriver)){
 		printk(KERN_ERR "PCI registration failed.\n");
-		pci_unregister_driver(&pci_blinkDriver);
-		cdev_del(&myDev.cdev);
-		unregister_chrdev_region(myDev.devNode, NUMDEVS);
-		return -1;
+		goto unreg_driver;
+	}
+
+	//Create dev node
+	if((myDev.class = class_create(THIS_MODULE, "led_dev")) == NULL){
+		printk(KERN_ERR "class_create failed!\n");
+		goto destroy_class;
+	}
+	if(device_create(myDev.class, NULL, myDev.devNode, NULL, NODENAME) == NULL){
+		printk(KERN_ERR "device_create failed!\n");
+		goto unreg_dev_create;
 	}
 
 	return 0;
+
+unreg_dev_create:
+	device_destroy(myDev.class, myDev.devNode);
+destroy_class:
+	class_destroy(myDev.class);
+unreg_driver:
+	pci_unregister_driver(&pci_blinkDriver);
+del_cdev:
+	cdev_del(&myDev.cdev);
+unreg_region:
+	unregister_chrdev_region(myDev.devNode, NUMDEVS);
+	return -1;
 }
 
 //========================================
