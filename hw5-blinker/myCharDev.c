@@ -121,6 +121,8 @@ unreg_region:
 void __exit chardev_exit(void){
 
 	//Clean up.
+	device_destroy(myDev.class, myDev.devNode);
+	class_destroy(myDev.class);
 	pci_unregister_driver(&pci_blinkDriver);
 	cdev_del(&myDev.cdev);
 	unregister_chrdev_region(myDev.devNode, NUMDEVS);
