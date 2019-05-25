@@ -191,8 +191,8 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 
 	int val = readl(myPci.hw_addr + 0xE00);
 
-	printk(KERN_INFO "base: %d\n", myPci.hw_addr);
-	printk(KERN_INFO "base + offset: %d\n", (myPci.hw_addr + 0xE00));
+	printk(KERN_INFO "base: %X\n", myPci.hw_addr);
+	printk(KERN_INFO "base + offset: %X\n", (myPci.hw_addr + 0xE00));
 
 	if(*offset >= sizeof(int)){
 		return 0;
