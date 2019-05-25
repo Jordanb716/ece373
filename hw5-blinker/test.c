@@ -10,6 +10,8 @@
 #include <unistd.h>
 
 #define MAX 10
+#define LED_MODE_ON 0xF
+#define LED_MODE_OFF 0xE
 
 void main(){
 
@@ -18,30 +20,27 @@ void main(){
 	char c;
 	char buf[MAX]; 
 
+	//Read
 	if(!(fp = fopen("/dev/myCharDev", "r+"))){
 		printf("open 1 failed\n");
 	}
 	printf("Current value: %d\n", fgets(buf, MAX, fp));
 	fclose(fp);
 
-
-
-	for(int x = 0; x < 255; x++){
-		if(!(fp = fopen("/dev/myCharDev", "r+"))){
-			printf("open 2 failed\n");
-		}
-		fprintf(fp, "%d", x);
-		fclose(fp);
-
-		if(!(fp = fopen("/dev/myCharDev", "r+"))){
-			printf("open 3 failed\n");
-		}
-		printf("New value: %d\n", fgets(buf, MAX, fp));
-		fclose(fp);
-
-		sleep(1);
+	//Write 1
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 2 failed\n");
 	}
+	fprintf(fp, "%d", (LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24));
+	fclose(fp);
 
+	sleep(1);
 
+	//Write 2
+	if(!(fp = fopen("/dev/myCharDev", "r+"))){
+		printf("open 2 failed\n");
+	}
+	fprintf(fp, "%d", (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24));
+	fclose(fp);
 
 }
