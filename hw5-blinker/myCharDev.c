@@ -15,6 +15,7 @@
 #include <linux/pci.h>
 #include <linux/netdevice.h>
 #include <linux/time.h>
+#include <linux/timer.h>
 
 #define NUMDEVS 1
 #define DEVNAME "blinky"
@@ -29,6 +30,7 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset);
 static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_id* ent);
 static void pci_blinkDriver_remove(struct pci_dev* pdev);
+static void blinkLED();
 
 //Structs
 static struct mydev_dev {
