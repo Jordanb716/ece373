@@ -16,7 +16,7 @@
 #define LED_MODE_ON 0xF
 #define LED_MODE_OFF 0xE
 
-void main(){
+int main(){
 
 	//Variables
 	int fp;

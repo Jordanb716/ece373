@@ -19,6 +19,9 @@
 #define DEVNAME "blinky"
 #define NODENAME "led_dev"
 
+#define LED_MODE_ON 0xF
+#define LED_MODE_OFF 0xE
+
 //Function prototypes
 static int chardev_open(struct inode *inode, struct file *file);
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset);
@@ -32,6 +35,7 @@ static struct mydev_dev {
 	dev_t devNode;
 	long led_initial_val;
 	struct class* class;
+	bool ledZeroIsOn;
 } myDev;
 
 static struct myPci{
@@ -59,7 +63,30 @@ static struct pci_driver pci_blinkDriver = {
 	.remove = pci_blinkDriver_remove,
 };
 
+int allOff = ((LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24));
+int zeroOn = ((LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24));
+struct timer_list blinkTimer;
 char blinkDriverName[] = DEVNAME;
+
+int blink_rate = 1;
+module_param(blink_rate, int, S_IRUSR | S_IWUSR);
+
+//========================================
+//Functions
+void blinkLED(){
+
+	if(myDev.ledZeroIsOn == true){
+		myDev.ledZeroIsOn = false;
+		writel(allOff, myPci.hw_addr + 0x00E00);
+	}
+	else{
+		myDev.ledZeroIsOn = true;
+		writel(zeroOn, myPci.hw_addr + 0x00E00);
+	}
+
+	mod_timer(&blinkTimer, (HZ/blink_rate)+jiffies);
+
+}
 
 //========================================
 //Initialization
@@ -101,6 +128,9 @@ int __init chardev_init(void){
 		goto unreg_dev_create;
 	}
 
+	//Setup timer.
+	setup_timer(&blinkTimer, blinkLED, NULL);
+
 	return 0;
 
 unreg_dev_create:
@@ -126,6 +156,8 @@ void __exit chardev_exit(void){
 	pci_unregister_driver(&pci_blinkDriver);
 	cdev_del(&myDev.cdev);
 	unregister_chrdev_region(myDev.devNode, NUMDEVS);
+
+	del_timer_sync(&blinkTimer);
 
 	printk(KERN_INFO "myCharDev module unloaded!\n");
 }
@@ -182,14 +214,15 @@ static int chardev_open(struct inode *inode, struct file *file){
 
 	printk(KERN_INFO "File opened!\n");
 
+	//Start timer
+	mod_timer(&blinkTimer, (HZ/blink_rate)+jiffies);
+
 	return 0;
 }
 
 //========================================
 //Read
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset){
-
-	int val = readl(myPci.hw_addr + 0xE00);
 
 	printk(KERN_INFO "base: %X\n", myPci.hw_addr);
 	printk(KERN_INFO "base + offset: %X\n", (myPci.hw_addr + 0xE00));
@@ -204,13 +237,12 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 	}
 
 	//Send
-	if(copy_to_user(buf, &val, sizeof(int))) {
+	if(copy_to_user(buf, &blink_rate, sizeof(int))) {
 		return -EFAULT; //Send error.
 	}
 
 	*offset += len;
 
-	printk(KERN_INFO "User got from us %d\n", val);
 	return sizeof(int);
 }
 
@@ -226,18 +258,13 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 	}
 
 	//Copy from the user-provided buffer
-	if (copy_from_user(&val, buf, len)) {
+	if (copy_from_user(&blink_rate, buf, len)) {
 		/* uh-oh... */
 		return -EFAULT;
 	}
 
 	/* print what userspace gave us */
-	printk(KERN_INFO "Userspace wrote \"%d\" to us\n", &val);
-
-	//Write to PCI
-	writel(val, myPci.hw_addr + 0xE00);
-
-	printk(KERN_INFO "Sent \"%d\" to device\n", &val);
+	printk(KERN_INFO "Userspace wrote \"%d\" to us\n", &blink_rate);
 
 	return len;
 
@@ -245,6 +272,6 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 
 MODULE_AUTHOR("Jordan Bergmann");
 MODULE_LICENSE("GPL");
-MODULE_VERSION("0.2");
+MODULE_VERSION("0.3");
 module_init(chardev_init);
 module_exit(chardev_exit);
