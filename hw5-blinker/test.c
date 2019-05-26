@@ -30,7 +30,7 @@ void main(){
 
 	//Read
 	read(fp, &initVal, 0);
-	if(val < 0)
+	if(initVal < 0)
 		printf("Read error.\n");
 	printf("Current value: %X\n", initVal);
 
