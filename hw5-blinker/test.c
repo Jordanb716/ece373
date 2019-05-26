@@ -7,6 +7,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
+#include <fcntl.h>
+#include <string.h>
 #include <unistd.h>
 
 #define MAX 10
@@ -27,7 +30,7 @@ void main(){
 
 	//Read
 	read(fp, &initVal, 0);
-	if(ret < 0)
+	if(val < 0)
 		printf("Read error.\n");
 	printf("Current value: %X\n", initVal);
 
