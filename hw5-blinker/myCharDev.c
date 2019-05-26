@@ -74,7 +74,7 @@ module_param(blink_rate, int, S_IRUSR | S_IWUSR);
 
 //========================================
 //Functions
-void blinkLED(){
+static void blinkLED(){
 
 	if(myDev.ledZeroIsOn == true){
 		myDev.ledZeroIsOn = false;
