@@ -30,7 +30,7 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset);
 static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_id* ent);
 static void pci_blinkDriver_remove(struct pci_dev* pdev);
-static void blinkLED();
+static void blinkLED(int data);
 
 //Structs
 static struct mydev_dev {
@@ -76,7 +76,7 @@ module_param(blink_rate, int, S_IRUSR | S_IWUSR);
 
 //========================================
 //Functions
-static void blinkLED(){
+static void blinkLED(int data){
 
 	if(myDev.ledZeroIsOn == true){
 		myDev.ledZeroIsOn = false;
