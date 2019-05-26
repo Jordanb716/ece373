@@ -21,6 +21,8 @@ void main(){
 	//Variables
 	int fp;
 	int initVal;
+	int allOff = ((LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24));
+	int zeroTwo = ((LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24));
 
 	//Open file
 	if(!(fp = open("/dev/led_dev", O_RDWR))){
@@ -35,7 +37,7 @@ void main(){
 	printf("Current value: %X\n", initVal);
 
 	//Write 1
-	if((write(fp, &LED_MODE_ON, sizeof(LED_MODE_ON))) < 0){
+	if((write(fp, &zeroTwo, sizeof(zeroTwo))) < 0){
 		printf("Write 1 error.\n");
 	}
 
@@ -43,7 +45,7 @@ void main(){
 	sleep(1);
 
 	//Write 2
-	if((write(fp, &LED_MODE_OFF, sizeof(LED_MODE_OFF))) < 0){
+	if((write(fp, &allOff, sizeof(allOff))) < 0){
 		printf("Write 2 error.\n");
 	}
 
