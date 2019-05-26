@@ -15,7 +15,6 @@
 #include <linux/pci.h>
 #include <linux/netdevice.h>
 #include <linux/time.h>
-#include <linux/timer.h>
 
 #define NUMDEVS 1
 #define DEVNAME "blinky"
