@@ -16,31 +16,43 @@
 void main(){
 
 	//Variables
-	FILE* fp;
-	char c;
-	char buf[MAX]; 
+	int fp;
+	int initVal;
+
+	//Open file
+	if(!(fp = open("/dev/led_dev", O_RDWR))){
+		printf("Error opening file.\n");
+		return -1;
+	}
 
 	//Read
-	if(!(fp = fopen("/dev/led_dev", "r+"))){
-		printf("open 1 failed\n");
-	}
-	printf("Current value: %d\n", fgets(buf, MAX, fp));
-	fclose(fp);
+	read(fp, &initVal, 0);
+	if(ret < 0)
+		printf("Read error.\n");
+	printf("Current value: %X\n", initVal);
 
 	//Write 1
-	if(!(fp = fopen("/dev/led_dev", "r+"))){
-		printf("open 2 failed\n");
+	if((write(fp, LED_MODE_ON, sizeof(LED_MODE_ON))) < 0){
+		printf("Write 1 error.\n");
 	}
-	fprintf(fp, "%d", (LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24));
-	fclose(fp);
 
+	//Wait
 	sleep(1);
 
 	//Write 2
-	if(!(fp = fopen("/dev/led_dev", "r+"))){
-		printf("open 2 failed\n");
+	if((write(fp, LED_MODE_OFF, sizeof(LED_MODE_OFF))) < 0){
+		printf("Write 2 error.\n");
 	}
-	fprintf(fp, "%d", (LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_ON<<16)|(LED_MODE_OFF<<24));
-	fclose(fp);
+
+	//Wait
+	sleep(1);
+
+	//Write 3 (return to initial initValue)
+	if((write(fp, initVal, sizeof(initVal))) < 0){
+		printf("Write 3 error.\n");
+	}
+
+	//Close file
+	close(fp);
 
 }
