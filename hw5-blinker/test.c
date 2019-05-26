@@ -35,7 +35,7 @@ void main(){
 	printf("Current value: %X\n", initVal);
 
 	//Write 1
-	if((write(fp, LED_MODE_ON, sizeof(LED_MODE_ON))) < 0){
+	if((write(fp, &LED_MODE_ON, sizeof(LED_MODE_ON))) < 0){
 		printf("Write 1 error.\n");
 	}
 
@@ -43,7 +43,7 @@ void main(){
 	sleep(1);
 
 	//Write 2
-	if((write(fp, LED_MODE_OFF, sizeof(LED_MODE_OFF))) < 0){
+	if((write(fp, &LED_MODE_OFF, sizeof(LED_MODE_OFF))) < 0){
 		printf("Write 2 error.\n");
 	}
 
@@ -51,7 +51,7 @@ void main(){
 	sleep(1);
 
 	//Write 3 (return to initial initValue)
-	if((write(fp, initVal, sizeof(initVal))) < 0){
+	if((write(fp, &initVal, sizeof(initVal))) < 0){
 		printf("Write 3 error.\n");
 	}
 
