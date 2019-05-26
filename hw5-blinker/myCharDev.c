@@ -132,7 +132,7 @@ int __init chardev_init(void){
 	}
 
 	//Setup timer.
-	setup_timer(&blinkTimer, blinkLED, 0);
+	timer_setup(&blinkTimer, blinkLED, NULL);
 
 	return 0;
 
