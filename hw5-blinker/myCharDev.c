@@ -5,6 +5,7 @@
 //Description: A basic char device. Now with PCI support!
 //==============================================================================
 
+#include <linux/timer.h>
 #include <linux/module.h>
 #include <linux/types.h>
 #include <linux/kdev_t.h>
@@ -18,7 +19,6 @@
 #include <linux/timekeeping.h>
 #include <linux/delay.h>
 #include <linux/jiffies.h>
-#include <linux/timer.h>
 
 #define NUMDEVS 1
 #define DEVNAME "blinky"
