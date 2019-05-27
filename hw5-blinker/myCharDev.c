@@ -14,7 +14,7 @@
 #include <linux/uaccess.h>
 #include <linux/pci.h>
 #include <linux/netdevice.h>
-#include <linux/time.h>
+//#include <linux/time.h>
 #include <linux/init.h>
 #include <linux/timekeeping.h>
 #include <linux/delay.h>
