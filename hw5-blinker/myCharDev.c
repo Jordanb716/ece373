@@ -79,7 +79,7 @@ module_param(blink_rate, int, S_IRUSR | S_IWUSR);
 
 //========================================
 //Functions
-void blinkLED(int data){
+void blinkLED(struct timer_list *list){
 
 	if(myDev.ledZeroIsOn == true){
 		myDev.ledZeroIsOn = false;
