@@ -232,9 +232,6 @@ static int chardev_open(struct inode *inode, struct file *file){
 //Read
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset){
 
-	printk(KERN_INFO "base: %X\n", myPci.hw_addr);
-	printk(KERN_INFO "base + offset: %X\n", (myPci.hw_addr + 0xE00));
-
 	if(*offset >= sizeof(int)){
 		return 0;
 	}
