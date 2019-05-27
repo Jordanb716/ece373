@@ -270,6 +270,9 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 		return -EFAULT;
 	}
 
+	/* print what userspace gave us */
+	printk(KERN_INFO "Userspace wrote \"%d\" to us\n", blink_rate);
+
 	//Sanity check input.
 	if(val > 0){
 		blink_rate = val;
@@ -277,9 +280,6 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 	else{
 		return -EINVAL; //Invalid input.
 	}
-
-	/* print what userspace gave us */
-	printk(KERN_INFO "Userspace wrote \"%d\" to us\n", blink_rate);
 
 	return len;
 
