@@ -14,7 +14,6 @@
 #include <linux/uaccess.h>
 #include <linux/pci.h>
 #include <linux/netdevice.h>
-//#include <linux/time.h>
 #include <linux/init.h>
 #include <linux/timekeeping.h>
 #include <linux/delay.h>
@@ -136,7 +135,7 @@ int __init chardev_init(void){
 	}
 
 	//Setup timer.
-	timer_setup(&blinkTimer, blinkLED, NULL);
+	timer_setup(&blinkTimer, blinkLED, 0);
 
 	return 0;
 
