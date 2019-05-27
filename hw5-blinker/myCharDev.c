@@ -74,7 +74,7 @@ int zeroOn = ((LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<
 struct timer_list blinkTimer;
 char blinkDriverName[] = DEVNAME;
 
-int blink_rate = 1;
+int blink_rate = 2;
 module_param(blink_rate, int, S_IRUSR | S_IWUSR);
 
 //========================================
@@ -133,9 +133,11 @@ int __init chardev_init(void){
 		printk(KERN_ERR "device_create failed!\n");
 		goto unreg_dev_create;
 	}
+	printk(KERN_INFO "Device created!\n");
 
 	//Setup timer.
 	timer_setup(&blinkTimer, blinkLED, 0);
+	printk(KERN_INFO "Timer setup!\n");
 
 	return 0;
 
@@ -264,9 +266,17 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 	}
 
 	//Copy from the user-provided buffer
-	if (copy_from_user(&blink_rate, buf, len)) {
+	if (copy_from_user(&val, buf, len)) {
 		/* uh-oh... */
 		return -EFAULT;
+	}
+
+	//Sanity check input.
+	if(val > 0){
+		blink_rate = val;
+	}
+	else{
+		return -EINVAL; //Invalid input.
 	}
 
 	/* print what userspace gave us */
