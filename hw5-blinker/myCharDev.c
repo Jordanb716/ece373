@@ -22,7 +22,7 @@
 
 #define NUMDEVS 1
 #define DEVNAME "blinky"
-#define NODENAME "led_dev"
+#define NODENAME "ece_led"
 
 #define LED_MODE_ON 0xF
 #define LED_MODE_OFF 0xE
