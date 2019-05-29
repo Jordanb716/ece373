@@ -85,15 +85,16 @@ void blinkLED(struct timer_list *list){
 		myDev.ledZeroIsOn = false;
 		writel(allOff, myPci.hw_addr + 0x00E00);
 	}
-	else{
+	else if(blink_rate != 0){
 		myDev.ledZeroIsOn = true;
 		writel(zeroOn, myPci.hw_addr + 0x00E00);
 	}
 
-	if(blink_rate < 1){
-		return -EINVAL; //Invalid input.
+	if(blink_rate == 0){
+		mod_timer(&blinkTimer, (HZ)+jiffies);
 	}
-	mod_timer(&blinkTimer, (HZ/blink_rate)+jiffies);
+	else
+		mod_timer(&blinkTimer, (HZ/blink_rate)+jiffies);
 
 }
 
@@ -277,7 +278,7 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 	printk(KERN_INFO "Userspace wrote \"%d\" to us\n", val);
 
 	//Sanity check input.
-	if(val > 0){
+	if(val >= 0){
 		blink_rate = val;
 	}
 	else{
