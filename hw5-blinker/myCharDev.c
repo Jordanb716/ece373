@@ -90,6 +90,9 @@ void blinkLED(struct timer_list *list){
 		writel(zeroOn, myPci.hw_addr + 0x00E00);
 	}
 
+	if(blink_rate < 1){
+		return -EINVAL; //Invalid input.
+	}
 	mod_timer(&blinkTimer, (HZ/blink_rate)+jiffies);
 
 }
@@ -271,7 +274,7 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 	}
 
 	/* print what userspace gave us */
-	printk(KERN_INFO "Userspace wrote \"%d\" to us\n", blink_rate);
+	printk(KERN_INFO "Userspace wrote \"%d\" to us\n", val);
 
 	//Sanity check input.
 	if(val > 0){
