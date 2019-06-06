@@ -315,7 +315,7 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 	body.split.tail = (uint8_t)temp;
 
 	//Send
-	if(copy_to_user(buf, &body.whole, sizeof(int))) {
+	if(copy_to_user(buf, &body.whole, sizeof(body.whole))) {
 		return -EFAULT; //Send error.
 	}
 
