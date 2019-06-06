@@ -5,7 +5,7 @@
 //Description: A basic char device. Now with PCI support!
 //==============================================================================
 
-#include <stdint.h>
+#include "stdint.h"
 #include <linux/timer.h>
 #include <linux/module.h>
 #include <linux/types.h>
