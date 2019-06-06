@@ -6,7 +6,6 @@
 //==============================================================================
 
 #include <stdint.h>
-
 #include <linux/timer.h>
 #include <linux/module.h>
 #include <linux/types.h>
@@ -69,7 +68,7 @@ static struct myPci{
 } myPci;
 
 static struct dRing{
-	static struct descriptor{
+	struct descriptor{
 		uint64_t address;
 		uint16_t length;
 
@@ -294,8 +293,8 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 		struct split{
 			uint8_t head;
 			uint8_t tail;
-		}
-	}
+		} split;
+	} body;
 
 	if(*offset >= sizeof(int)){
 		return 0;
