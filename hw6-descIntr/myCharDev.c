@@ -174,9 +174,6 @@ int __init chardev_init(void){
 	}
 	printk(KERN_INFO "Device created!\n");
 
-	//Turn on LED0.
-	writel(zeroOn, myPci.hw_addr + 0x00E00);
-
 	//Setup timer.
 	timer_setup(&blinkTimer, blinkLED, 0);
 	printk(KERN_INFO "Timer setup!\n");
@@ -255,6 +252,8 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	//Setup descriptor
 	writel(0b00000000000000001000000000011010, myPci.hw_addr + RCTL);
 
+	//Turn on LED0.
+	writel(zeroOn, myPci.hw_addr + 0x00E00);
 
 	//Everything seems fine, blinky time.
 	//myDev.led_initial_val = readl(myPci.hw_addr + 0x00E00);
