@@ -66,7 +66,7 @@ static struct myPci{
 	void* hw_addr;
 } myPci;
 
-static struct dRing{
+/*static struct dRing{
 	struct descriptor{
 		uint64_t address;
 		uint16_t length;
@@ -80,7 +80,7 @@ static struct dRing{
 			uint8_t tail;
 		} addr;
 	}
-} dRing;
+} dRing;*/
 
 //-----Variables-----
 static struct file_operations mydev_fops = {
@@ -295,6 +295,8 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 		} split;
 	} body;
 
+	uint32_t temp;
+
 	if(*offset >= sizeof(int)){
 		return 0;
 	}
@@ -305,8 +307,12 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 	}
 
 	//Get head and tail.
-	body.split.head = readl(myPci.hw_addr + RDH);
-	body.split.tail = readl(myPci.hw_addr + RDT);
+	temp = readl(myPci.hw_addr + RDH);
+	printk(KERN_INFO "Head: %d\n", temp);
+	body.split.head = (uint8_t)temp;
+	temp = readl(myPci.hw_addr + RDT);
+	printk(KERN_INFO "Tail: %d\n", temp);
+	body.split.tail = (uint8_t)temp;
 
 	//Send
 	if(copy_to_user(buf, &body.whole, sizeof(int))) {
