@@ -5,6 +5,8 @@
 //Description: A basic char device. Now with PCI support!
 //==============================================================================
 
+#include <stdint.h>
+
 #include <linux/timer.h>
 #include <linux/module.h>
 #include <linux/types.h>
@@ -27,7 +29,24 @@
 #define LED_MODE_ON 0xF
 #define LED_MODE_OFF 0xE
 
-//Function prototypes
+//-----Addresses-----
+//Receive
+#define RCTL 0x00100 //Receive Control
+#define RDBAL 0x02800 //Base Address Low
+#define RDBAH 0x02804 //Base Address High
+#define RDLEN 0x02808 //Length
+#define RDH 0x02810 //Head
+#define RDT	0x02818 //Tail
+
+//Interrupt
+#define ICR 0x000C0 //Interrupt Cause Read
+#define ICS 0x000C8 //Interrupt Cause Set
+#define IMS 0x000D0 //Interrupt Mask Set
+#define IMC 0x000D8 //Interrupt Mask Clear
+
+#define NUM_DESC 0b000000001 //0000000_01 7 0's to fill Zero region, then a 2 for 16 descriptors.
+
+//-----Function prototypes-----
 static int chardev_open(struct inode *inode, struct file *file);
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset);
 static ssize_t chardev_write(struct file *file, const char __user *buf, size_t len, loff_t *offset);
@@ -35,7 +54,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 static void pci_blinkDriver_remove(struct pci_dev* pdev);
 void blinkLED(struct timer_list *list);
 
-//Structs
+//-----Structs-----
 static struct mydev_dev {
 	struct cdev cdev;
 	dev_t devNode;
@@ -49,7 +68,23 @@ static struct myPci{
 	void* hw_addr;
 } myPci;
 
-//Variables
+static struct dRing{
+	static struct descriptor{
+		uint64_t address;
+		uint16_t length;
+
+		bool done;
+	} desc[16];
+	union address{
+		uint16_t both;
+		struct single{
+			uint8_t head;
+			uint8_t tail;
+		} addr;
+	}
+} dRing;
+
+//-----Variables-----
 static struct file_operations mydev_fops = {
 	.owner = THIS_MODULE,
 	.open = chardev_open,
@@ -73,6 +108,8 @@ int allOff = ((LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<
 int zeroOn = ((LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24));
 struct timer_list blinkTimer;
 char blinkDriverName[] = DEVNAME;
+uint8_t head;
+uint8_t tail;
 
 int blink_rate = 2;
 module_param(blink_rate, int, S_IRUSR | S_IWUSR);
@@ -138,6 +175,9 @@ int __init chardev_init(void){
 		goto unreg_dev_create;
 	}
 	printk(KERN_INFO "Device created!\n");
+
+	//Turn on LED0.
+	writel(zeroOn, myPci.hw_addr + 0x00E00);
 
 	//Setup timer.
 	timer_setup(&blinkTimer, blinkLED, 0);
@@ -205,9 +245,22 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 		pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
 	}
 
+	//Reset interrupts.
+	writel(0xFFFF, myPci.hw_addr + IMC);
+
+	//TEST
+	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
+	printk(KERN_INFO "Offset: %lx\n", IMC);
+	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + IMC);
+	//TEST
+
+	//Setup descriptor
+	writel(0b00000000000000001000000000011010, myPci.hw_addr + RCTL);
+
+
 	//Everything seems fine, blinky time.
-	myDev.led_initial_val = readl(myPci.hw_addr + 0x00E00);
-	printk(KERN_INFO "Initial value is: %lx\n", myDev.led_initial_val);
+	//myDev.led_initial_val = readl(myPci.hw_addr + 0x00E00);
+	//printk(KERN_INFO "Initial value is: %lx\n", myDev.led_initial_val);
 
 	return 0;
 }
@@ -236,6 +289,14 @@ static int chardev_open(struct inode *inode, struct file *file){
 //Read
 static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, loff_t *offset){
 
+	union body{
+		uint16_t whole;
+		struct split{
+			uint8_t head;
+			uint8_t tail;
+		}
+	}
+
 	if(*offset >= sizeof(int)){
 		return 0;
 	}
@@ -245,8 +306,12 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 		return -EINVAL; //Invalid input.
 	}
 
+	//Get head and tail.
+	body.split.head = readl(myPci.hw_addr + RDH);
+	body.split.tail = readl(myPci.hw_addr + RDT);
+
 	//Send
-	if(copy_to_user(buf, &blink_rate, sizeof(int))) {
+	if(copy_to_user(buf, &body.whole, sizeof(int))) {
 		return -EFAULT; //Send error.
 	}
 
