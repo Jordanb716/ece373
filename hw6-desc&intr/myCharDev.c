@@ -293,7 +293,7 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 		struct split{
 			uint8_t head;
 			uint8_t tail;
-		} whole;
+		} split;
 	} body;
 
 	if(*offset >= sizeof(int)){
