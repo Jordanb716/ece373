@@ -229,7 +229,7 @@ int __init chardev_init(void){
 		printk(KERN_ERR "kzalloc failed!\n");
 		goto free_dRing;
 	}
-	printk(KERN_INFO "dRing:%d\n", dRing);
+	printk(KERN_INFO "dRing:%d\n", (uint32_t)dRing);
 
 	//Setup timer.
 	timer_setup(&blinkTimer, blinkLED, 0);
