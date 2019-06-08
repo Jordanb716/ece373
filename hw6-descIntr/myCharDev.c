@@ -391,7 +391,7 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 
 	*offset += len;
 
-	printk(KERN_INFO "User got from us %d\n", blink_rate);
+	printk(KERN_INFO "User got from us %d\n", body.whole);
 
 	return sizeof(int);
 }
