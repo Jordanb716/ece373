@@ -229,6 +229,7 @@ int __init chardev_init(void){
 		printk(KERN_ERR "kzalloc failed!\n");
 		goto free_dRing;
 	}
+	printk(KERN_INFO "dRing:%d\n", dRing);
 
 	//Setup timer.
 	timer_setup(&blinkTimer, blinkLED, 0);
@@ -308,12 +309,6 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	//Reset interrupts.
 	writel(0xFFFF, myPci.hw_addr + IMC);
 
-	//TEST
-	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
-	printk(KERN_INFO "Offset: %lx\n", IMC);
-	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + IMC);
-	//TEST
-
 	//Setup descriptor
 	writel((uint32_t)dRing, myPci.hw_addr + RDBAL); //Set descriptor address low half.
 	writel(((uint32_t)dRing >> 32), myPci.hw_addr + RDBAH); //Set descriptor address high half.
@@ -326,20 +321,20 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
 	printk(KERN_INFO "RDBAL Offset: %lx\n", RDBAL);
 	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDBAL);
-	printk(KERN_INFO "Wrote: %lx\n", (uint32_t)dRing);
+	printk(KERN_INFO "Wrote: %lx\n\n", (uint32_t)dRing);
 	//TEST//TEST
 	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
 	printk(KERN_INFO "RDBAH Offset: %lx\n", RDBAH);
 	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDBAH);
-	printk(KERN_INFO "Wrote: %lx\n", ((uint32_t)dRing >> 32));
+	printk(KERN_INFO "Wrote: %lx\n\n", ((uint32_t)dRing >> 32));
 	//TEST//TEST
 	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
 	printk(KERN_INFO "RDLEN Offset: %lx\n", RDLEN);
-	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDLEN);
+	printk(KERN_INFO "Total: %lx\n\n", myPci.hw_addr + RDLEN);
 	//TEST//TEST
 	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
 	printk(KERN_INFO "RCTL Offset: %lx\n", RCTL);
-	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RCTL);
+	printk(KERN_INFO "Total: %lx\n\n", myPci.hw_addr + RCTL);
 	//TEST
 
 	//Turn on LED0.
