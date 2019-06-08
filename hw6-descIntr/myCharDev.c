@@ -189,6 +189,14 @@ int __init chardev_init(void){
 
 	printk(KERN_INFO "Initializing myCharDev module!\n");
 
+	//Allocate memory.
+	dRing = kzalloc(sizeof(struct dRing), GFP_DMA);
+	if(dRing == NULL){
+		printk(KERN_ERR "kzalloc failed!\n");
+		goto free_dRing;
+	}
+	printk(KERN_INFO "dRing:%d\n", (uint32_t)dRing);
+
 	//Allocate major/minor numbers.
 	if(alloc_chrdev_region(&myDev.devNode, 0, NUMDEVS, "myCharDev")){
 		printk(KERN_ERR "alloc_chrdev_region() failed!\n");
@@ -224,21 +232,12 @@ int __init chardev_init(void){
 	}
 	printk(KERN_INFO "Device created!\n");
 
-	dRing = kzalloc(sizeof(struct dRing), GFP_DMA);
-	if(dRing == NULL){
-		printk(KERN_ERR "kzalloc failed!\n");
-		goto free_dRing;
-	}
-	printk(KERN_INFO "dRing:%d\n", (uint32_t)dRing);
-
 	//Setup timer.
 	timer_setup(&blinkTimer, blinkLED, 0);
 	printk(KERN_INFO "Timer setup!\n");
 
 	return 0;
 
-free_dRing:
-	kfree(dRing);
 unreg_dev_create:
 	device_destroy(myDev.class, myDev.devNode);
 destroy_class:
@@ -249,6 +248,8 @@ del_cdev:
 	cdev_del(&myDev.cdev);
 unreg_region:
 	unregister_chrdev_region(myDev.devNode, NUMDEVS);
+free_dRing:
+	kfree(dRing);
 	return -1;
 }
 
