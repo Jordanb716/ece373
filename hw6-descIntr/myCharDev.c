@@ -351,7 +351,7 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 
 	union body{
 		uint16_t whole;
-		struct split{1
+		struct split{
 			uint8_t head;
 			uint8_t tail;
 		} split;
