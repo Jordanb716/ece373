@@ -331,7 +331,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
 	printk(KERN_INFO "RDBAH Offset: %lx\n", RDBAH);
 	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDBAH);
-	printk(KERN_INFO "Wrote: %lx\n", ((uint32_t)dRing >> 32);
+	printk(KERN_INFO "Wrote: %lx\n", ((uint32_t)dRing >> 32));
 	//TEST//TEST
 	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
 	printk(KERN_INFO "RDLEN Offset: %lx\n", RDLEN);
