@@ -307,11 +307,11 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	//TEST
 
 	//Setup descriptor
-	writel(&(dRing.desc[0]), myPci.hw_addr + RDBAL); //Set descriptor address low half.
-	writel(&dRing.desc[0], myPci.hw_addr + RDBAH); //Set descriptor address high half.
+	writel(&dRing, myPci.hw_addr + RDBAL); //Set descriptor address low half.
+	writel(&dRing, myPci.hw_addr + RDBAH); //Set descriptor address high half.
 	writel(NUM_DESC, myPci.hw_addr + RDLEN); //Set number of descriptors.
-	writel(&dRing.desc[0], myPci.hw_addr + RDH); //Set head pointer to beginning of ring.
-	writel(&dRing.desc[0], myPci.hw_addr + RDT); //Set tail pointer to beginning of ring.
+	writel(&dRing, myPci.hw_addr + RDH); //Set head pointer to beginning of ring.
+	writel(&dRing, myPci.hw_addr + RDT); //Set tail pointer to beginning of ring.
 	writel(RCTL_SET, myPci.hw_addr + RCTL); //Start reception and set operating parameters.
 
 	//Turn on LED0.
