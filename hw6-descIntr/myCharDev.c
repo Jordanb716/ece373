@@ -106,56 +106,58 @@ int blink_rate = 2;
 module_param(blink_rate, int, S_IRUSR | S_IWUSR);
 
 //-----Settings to write-----
-struct RCTL_SET{
-	int R1 : 1;
-	int EN : 1;
-	int SBP : 1;
-	int UPE : 1;
-	int MPE : 1;
-	int LPE : 1;
-	int LBM : 2;
-	int RDMTS : 2;
-	int R2 : 2;
-	int MO : 2;
-	int R3 : 1;
-	int BAM : 1;
-	int BSIZE : 2;
-	int VFE : 1;
-	int CFIEN : 1;
-	int CFI : 1;
-	int R4 : 1;
-	int DPF : 1;
-	int PMCF : 1;
-	int R5 : 1;
-	int BSEX : 1;
-	int SECRC : 1;
-	int R6 : 5;
+union RCTL_SET{
+	int set;
+	struct bits{
+		int R1 : 1;
+		int EN : 1;
+		int SBP : 1;
+		int UPE : 1;
+		int MPE : 1;
+		int LPE : 1;
+		int LBM : 2;
+		int RDMTS : 2;
+		int R2 : 2;
+		int MO : 2;
+		int R3 : 1;
+		int BAM : 1;
+		int BSIZE : 2;
+		int VFE : 1;
+		int CFIEN : 1;
+		int CFI : 1;
+		int R4 : 1;
+		int DPF : 1;
+		int PMCF : 1;
+		int R5 : 1;
+		int BSEX : 1;
+		int SECRC : 1;
+		int R6 : 5;
+	} bits;
 };
-static struct RCTL_SET RCTL_SET = {
-	.R1 = 0,
-	.EN = 1,
-	.SBP = 0,
-	.UPE = 1,
-	.MPE = 1,
-	.LPE = 1,
-	.LBM = 0,
-	.RDMTS = 0,
-	.R2 = 0,
-	.MO = 0,
-	.R3 = 0,
-	.BAM = 1,
-	.BSIZE = 0,
-	.VFE = 0,
-	.CFIEN = 0,
-	.CFI = 0,
-	.R4 = 0,
-	.DPF = 0,
-	.PMCF = 0,
-	.R5 = 0,
-	.BSEX = 0,
-	.SECRC = 0,
-	.R6 = 0,
-};
+static union RCTL_SET RCTL_SET;
+RCTL_SET.bits.R1 = 0;
+RCTL_SET.bits.EN = 1;
+RCTL_SET.bits.SBP = 0;
+RCTL_SET.bits.UPE = 1;
+RCTL_SET.bits.MPE = 1;
+RCTL_SET.bits.LPE = 1;
+RCTL_SET.bits.LBM = 0;
+RCTL_SET.bits.RDMTS = 0;
+RCTL_SET.bits.R2 = 0;
+RCTL_SET.bits.MO = 0;
+RCTL_SET.bits.R3 = 0;
+RCTL_SET.bits.BAM = 1;
+RCTL_SET.bits.BSIZE = 0;
+RCTL_SET.bits.VFE = 0;
+RCTL_SET.bits.CFIEN = 0;
+RCTL_SET.bits.CFI = 0;
+RCTL_SET.bits.R4 = 0;
+RCTL_SET.bits.DPF = 0;
+RCTL_SET.bits.PMCF = 0;
+RCTL_SET.bits.R5 = 0;
+RCTL_SET.bits.BSEX = 0;
+RCTL_SET.bits.SECRC = 0;
+RCTL_SET.bits.R6 = 0;
 
 //========================================
 //Functions
@@ -312,7 +314,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	writel(NUM_DESC, myPci.hw_addr + RDLEN); //Set number of descriptors.
 	writel(&dRing, myPci.hw_addr + RDH); //Set head pointer to beginning of ring.
 	writel(&dRing, myPci.hw_addr + RDT); //Set tail pointer to beginning of ring.
-	writel(RCTL_SET, myPci.hw_addr + RCTL); //Start reception and set operating parameters.
+	writel(RCTL_SET.set, myPci.hw_addr + RCTL); //Start reception and set operating parameters.
 
 	//Turn on LED0.
 	writel(zeroOn, myPci.hw_addr + 0x00E00);
