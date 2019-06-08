@@ -51,7 +51,7 @@ static ssize_t chardev_write(struct file *file, const char __user *buf, size_t l
 static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_id* ent);
 static void pci_blinkDriver_remove(struct pci_dev* pdev);
 void blinkLED(struct timer_list *list);
-void initSettings();
+void initSettings(void);
 
 //-----Structs-----
 static struct mydev_dev {
@@ -157,7 +157,7 @@ void blinkLED(struct timer_list *list){
 
 }
 
-void initSettings(){
+void initSettings(void){
 	RCTL_SET.bits.R1 = 0;
 	RCTL_SET.bits.EN = 1;
 	RCTL_SET.bits.SBP = 0;
