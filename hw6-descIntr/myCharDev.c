@@ -195,7 +195,7 @@ int __init chardev_init(void){
 		printk(KERN_ERR "kzalloc failed!\n");
 		goto free_dRing;
 	}
-	printk(KERN_INFO "dRing:%d\n", (uint32_t)dRing);
+	printk(KERN_INFO "dRing:%X\n", (uint32_t)dRing);
 
 	//Allocate major/minor numbers.
 	if(alloc_chrdev_region(&myDev.devNode, 0, NUMDEVS, "myCharDev")){
