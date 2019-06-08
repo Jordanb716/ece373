@@ -316,7 +316,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 
 	//Setup descriptor
 	writel((uint32_t)dRing, myPci.hw_addr + RDBAL); //Set descriptor address low half.
-	writel((uint32_t)(dRing >> 32), myPci.hw_addr + RDBAH); //Set descriptor address high half.
+	writel(((uint32_t)dRing >> 32), myPci.hw_addr + RDBAH); //Set descriptor address high half.
 	writel(NUM_DESC, myPci.hw_addr + RDLEN); //Set number of descriptors.
 	writel((uint32_t)dRing, myPci.hw_addr + RDH); //Set head pointer to beginning of ring.
 	writel((uint32_t)dRing, myPci.hw_addr + RDT); //Set tail pointer to beginning of ring.
