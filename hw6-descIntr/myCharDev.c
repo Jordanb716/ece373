@@ -107,7 +107,7 @@ module_param(blink_rate, int, S_IRUSR | S_IWUSR);
 
 //-----Settings to write-----
 union RCTL_SET{
-	int set;
+	uint32_t set;
 	struct bits{
 		int R1 : 1;
 		int EN : 1;
@@ -133,31 +133,7 @@ union RCTL_SET{
 		int SECRC : 1;
 		int R6 : 5;
 	} bits;
-};
-static union RCTL_SET RCTL_SET;
-RCTL_SET.bits.R1 = 0;
-RCTL_SET.bits.EN = 1;
-RCTL_SET.bits.SBP = 0;
-RCTL_SET.bits.UPE = 1;
-RCTL_SET.bits.MPE = 1;
-RCTL_SET.bits.LPE = 1;
-RCTL_SET.bits.LBM = 0;
-RCTL_SET.bits.RDMTS = 0;
-RCTL_SET.bits.R2 = 0;
-RCTL_SET.bits.MO = 0;
-RCTL_SET.bits.R3 = 0;
-RCTL_SET.bits.BAM = 1;
-RCTL_SET.bits.BSIZE = 0;
-RCTL_SET.bits.VFE = 0;
-RCTL_SET.bits.CFIEN = 0;
-RCTL_SET.bits.CFI = 0;
-RCTL_SET.bits.R4 = 0;
-RCTL_SET.bits.DPF = 0;
-RCTL_SET.bits.PMCF = 0;
-RCTL_SET.bits.R5 = 0;
-RCTL_SET.bits.BSEX = 0;
-RCTL_SET.bits.SECRC = 0;
-RCTL_SET.bits.R6 = 0;
+} RCTL_SET;
 
 //========================================
 //Functions
@@ -178,6 +154,32 @@ void blinkLED(struct timer_list *list){
 	else
 		mod_timer(&blinkTimer, (HZ/blink_rate)+jiffies);
 
+}
+
+void initSettings(){
+	RCTL_SET.bits.R1 = 0;
+	RCTL_SET.bits.EN = 1;
+	RCTL_SET.bits.SBP = 0;
+	RCTL_SET.bits.UPE = 1;
+	RCTL_SET.bits.MPE = 1;
+	RCTL_SET.bits.LPE = 1;
+	RCTL_SET.bits.LBM = 0;
+	RCTL_SET.bits.RDMTS = 0;
+	RCTL_SET.bits.R2 = 0;
+	RCTL_SET.bits.MO = 0;
+	RCTL_SET.bits.R3 = 0;
+	RCTL_SET.bits.BAM = 1;
+	RCTL_SET.bits.BSIZE = 0;
+	RCTL_SET.bits.VFE = 0;
+	RCTL_SET.bits.CFIEN = 0;
+	RCTL_SET.bits.CFI = 0;
+	RCTL_SET.bits.R4 = 0;
+	RCTL_SET.bits.DPF = 0;
+	RCTL_SET.bits.PMCF = 0;
+	RCTL_SET.bits.R5 = 0;
+	RCTL_SET.bits.BSEX = 0;
+	RCTL_SET.bits.SECRC = 0;
+	RCTL_SET.bits.R6 = 0;
 }
 
 //========================================
@@ -274,6 +276,9 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	unsigned long barMask;
 
 	printk(KERN_INFO "Blink driver pci called.\n");
+
+	//Initialize settings values for later wrties.
+	initSettings();
 
 	//Get BAR mask.
 	barMask = pci_select_bars(pdev, IORESOURCE_MEM);
