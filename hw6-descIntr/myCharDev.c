@@ -322,6 +322,26 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	//writel((uint32_t)dRing, myPci.hw_addr + RDT); //Set tail pointer to beginning of ring.
 	writel(RCTL_SET.set, myPci.hw_addr + RCTL); //Start reception and set operating parameters.
 
+	//TEST
+	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
+	printk(KERN_INFO "RDBAL Offset: %lx\n", RDBAL);
+	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDBAL);
+	printk(KERN_INFO "Wrote: %lx\n", (uint32_t)dRing);
+	//TEST//TEST
+	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
+	printk(KERN_INFO "RDBAH Offset: %lx\n", RDBAH);
+	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDBAH);
+	printk(KERN_INFO "Wrote: %lx\n", ((uint32_t)dRing >> 32);
+	//TEST//TEST
+	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
+	printk(KERN_INFO "RDLEN Offset: %lx\n", RDLEN);
+	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDLEN);
+	//TEST//TEST
+	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
+	printk(KERN_INFO "RCTL Offset: %lx\n", RCTL);
+	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RCTL);
+	//TEST
+
 	//Turn on LED0.
 	writel(zeroOn, myPci.hw_addr + 0x00E00);
 
