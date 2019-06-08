@@ -268,7 +268,7 @@ void __exit chardev_exit(void){
 
 	kfree(dRing);
 
-	printk(KERN_INFO "myCharDev module unloaded!\n");
+	printk(KERN_INFO "\n-----myCharDev module unloaded!-----\n\n");
 }
 
 //========================================
