@@ -66,23 +66,18 @@ static struct myPci{
 	void* hw_addr;
 } myPci;
 
-/*static struct dRing{
+static struct dRing{
 	struct descriptor{
 		uint64_t address;
 		uint16_t length;
 
 		bool done;
 	} desc[16];
-	union address{
-		uint16_t both;
-		struct single{
-			uint8_t head;
-			uint8_t tail;
-		} addr;
-	}
-} dRing;*/
+};
 
 //-----Variables-----
+void* dRing;
+
 static struct file_operations mydev_fops = {
 	.owner = THIS_MODULE,
 	.open = chardev_open,
@@ -106,11 +101,61 @@ int allOff = ((LED_MODE_OFF)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<
 int zeroOn = ((LED_MODE_ON)|(LED_MODE_OFF<<8)|(LED_MODE_OFF<<16)|(LED_MODE_OFF<<24));
 struct timer_list blinkTimer;
 char blinkDriverName[] = DEVNAME;
-uint8_t head;
-uint8_t tail;
 
 int blink_rate = 2;
 module_param(blink_rate, int, S_IRUSR | S_IWUSR);
+
+//-----Settings to write-----
+struct RCTL_SET{
+	int R1 : 1;
+	int EN : 1;
+	int SBP : 1;
+	int UPE : 1;
+	int MPE : 1;
+	int LPE : 1;
+	int LBM : 2;
+	int RDMTS : 2;
+	int R2 : 2;
+	int MO : 2;
+	int R3 : 1;
+	int BAM : 1;
+	int BSIZE : 2;
+	int VFE : 1;
+	int CFIEN : 1;
+	int CFI : 1;
+	int R4 : 1;
+	int DPF : 1;
+	int PMCF : 1;
+	int R5 : 1;
+	int BSEX : 1;
+	int SECRC : 1;
+	int R6 : 5;
+};
+static struct RCTL_SET RCTL_SET = {
+	.R1 = 0,
+	.EN = 1,
+	.SBP = 0,
+	.UPE = 1,
+	.MPE = 1,
+	.LPE = 1,
+	.LBM = 0,
+	.RDMTS = 0,
+	.R2 = 0,
+	.MO = 0,
+	.R3 = 0,
+	.BAM = 1,
+	.BSIZE = 0,
+	.VFE = 0,
+	.CFIEN = 0,
+	.CFI = 0,
+	.R4 = 0,
+	.DPF = 0,
+	.PMCF = 0,
+	.R5 = 0,
+	.BSEX = 0,
+	.SECRC = 0,
+	.R6 = 0,
+};
 
 //========================================
 //Functions
@@ -174,12 +219,20 @@ int __init chardev_init(void){
 	}
 	printk(KERN_INFO "Device created!\n");
 
+	dRing = kzalloc(sizeof(struct dRing), GFP_DMA);
+	if(dRing == NULL){
+		printk(KERN_ERR "kzalloc failed!\n");
+		goto free_dRing;
+	}
+
 	//Setup timer.
 	timer_setup(&blinkTimer, blinkLED, 0);
 	printk(KERN_INFO "Timer setup!\n");
 
 	return 0;
 
+free_dRing:
+	kfree(dRing);
 unreg_dev_create:
 	device_destroy(myDev.class, myDev.devNode);
 destroy_class:
@@ -205,6 +258,8 @@ void __exit chardev_exit(void){
 	unregister_chrdev_region(myDev.devNode, NUMDEVS);
 
 	del_timer_sync(&blinkTimer);
+
+	kfree(dRing);
 
 	printk(KERN_INFO "myCharDev module unloaded!\n");
 }
@@ -240,6 +295,8 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 		pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
 	}
 
+	pci_enable_device(pdev);
+
 	//Reset interrupts.
 	writel(0xFFFF, myPci.hw_addr + IMC);
 
@@ -250,7 +307,12 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	//TEST
 
 	//Setup descriptor
-	writel(0b00000000000000001000000000011010, myPci.hw_addr + RCTL);
+	writel(&dRing.desc[0], myPci.hw_addr + RDBAL); //Set descriptor address low half.
+	writel(&dRing.desc[0], myPci.hw_addr + RDBAH); //Set descriptor address high half.
+	writel(NUM_DESC, myPci.hw_addr + RDLEN); //Set number of descriptors.
+	writel(&dRing.desc[0], myPci.hw_addr + RDH); //Set head pointer to beginning of ring.
+	writel(&dRing.desc[0], myPci.hw_addr + RDT); //Set tail pointer to beginning of ring.
+	writel(RCTL_SET, myPci.hw_addr + RCTL); //Start reception and set operating parameters.
 
 	//Turn on LED0.
 	writel(zeroOn, myPci.hw_addr + 0x00E00);
@@ -267,6 +329,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 static void pci_blinkDriver_remove(struct pci_dev* pdev){
 	iounmap(myPci.hw_addr);
 	pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
+	pci_disable_device(pdev);
 	printk(KERN_INFO "Blinky PCI driver removed.\n");
 }
 
@@ -288,7 +351,7 @@ static ssize_t chardev_read(struct file *file, char __user *buf, size_t len, lof
 
 	union body{
 		uint16_t whole;
-		struct split{
+		struct split{1
 			uint8_t head;
 			uint8_t tail;
 		} split;
