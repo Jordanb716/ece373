@@ -336,6 +336,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 
 	printk(KERN_INFO "Test 1.\n");
 	pci_enable_msi(pdev);
+	pci_enable_msix(pdev, 0, 1);
 	pci_enable_device(pdev);
 
 	//Reset and set CTRL
