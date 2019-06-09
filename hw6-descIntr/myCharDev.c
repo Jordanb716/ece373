@@ -332,7 +332,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 		pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
 	}
 
-	pci_enable_device(pdev);
+	pci_enable_device(myPci.pdev);
 
 	//Reset interrupts.
 	writel(0xFFFF, myPci.hw_addr + IMC);
