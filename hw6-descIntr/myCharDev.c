@@ -349,7 +349,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	writel(zeroOn, myPci.hw_addr + 0x00E00);
 
 	//Prep irq
-	request_irq(myPci.pdev->irq, my_irq_handler, NULL, "myCharDev",&myDev);
+	request_irq(myPci.pdev->irq, my_irq_handler, 0, "myCharDev",&myDev);
 
 	//Set interrupt
 	writel((1 << 13), myPci.hw_addr + IMS);
