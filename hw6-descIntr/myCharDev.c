@@ -28,6 +28,8 @@
 #define LED_MODE_OFF 0xE
 
 //-----Addresses-----
+#define CTRL 0x00000
+
 //Receive
 #define RCTL 0x00100 //Receive Control
 #define RDBAL 0x02800 //Base Address Low
@@ -334,6 +336,10 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 
 	printk(KERN_INFO "Test 1.\n");
 	pci_enable_device(pdev);
+
+	//Reset and set CTRL
+	writel((1 << 26) & (1<<8) & (1<<9) & (1<<11),mydev.hw_addr+CTRL);
+	msleep(1);
 
 	//Reset interrupts.
 	writel(0xFFFF, myPci.hw_addr + IMC);
