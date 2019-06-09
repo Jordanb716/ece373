@@ -163,7 +163,7 @@ static irqreturn_t my_irq_handler(int irq, void* data){
 	//Reset interrupts.
 	writel(0xFFFF, myPci.hw_addr + IMC);
 
-	schedule_work(&myDev.handler); 
+	schedule_work(&myDev.work); 
 	
 	return IRQ_HANDLED;
 }
