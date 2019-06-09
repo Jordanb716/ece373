@@ -308,7 +308,7 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	initSettings();
 
 	//Prep work queue
-	INIT_WORK(&mydev.work, my_work);
+	INIT_WORK(&myDev.work, my_work);
 
 	//Get BAR mask.
 	barMask = pci_select_bars(pdev, IORESOURCE_MEM);
@@ -349,10 +349,10 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	writel(zeroOn, myPci.hw_addr + 0x00E00);
 
 	//Prep irq
-	request_irq(, my_irq_handler, NULL, "myCharDev",&myDev);
+	request_irq(myPci.pdev->irq, my_irq_handler, NULL, "myCharDev",&myDev);
 
 	//Set interrupt
-	writel((1 << 13), myPci.hw_addr + IMR);
+	writel((1 << 13), myPci.hw_addr + IMS);
 
 	//Everything seems fine, blinky time.
 	//myDev.led_initial_val = readl(myPci.hw_addr + 0x00E00);
