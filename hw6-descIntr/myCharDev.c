@@ -332,7 +332,8 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 		pci_release_selected_regions(pdev, pci_select_bars(pdev, IORESOURCE_MEM));
 	}
 
-	pci_enable_device(myPci.pdev);
+	printk(KERN_INFO "Test 1.\n");
+	pci_enable_device(pdev);
 
 	//Reset interrupts.
 	writel(0xFFFF, myPci.hw_addr + IMC);
@@ -349,10 +350,14 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	writel(zeroOn, myPci.hw_addr + 0x00E00);
 
 	//Prep irq
-	request_irq(myPci.pdev->irq, my_irq_handler, 0, "myCharDev",&myDev);
+	printk(KERN_INFO "Test 2.\n");
+	request_irq(pdev->irq, my_irq_handler, 0, "myCharDev",&myDev);
 
 	//Set interrupt
+	printk(KERN_INFO "Test 3.\n");
 	writel((1 << 13), myPci.hw_addr + IMS);
+
+	printk(KERN_INFO "Test 4.\n");
 
 	//Everything seems fine, blinky time.
 	//myDev.led_initial_val = readl(myPci.hw_addr + 0x00E00);
