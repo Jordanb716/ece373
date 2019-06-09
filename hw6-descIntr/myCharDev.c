@@ -60,6 +60,7 @@ static struct mydev_dev {
 	long led_initial_val;
 	struct class* class;
 	bool ledZeroIsOn;
+	struct work_struct work;
 } myDev;
 
 static struct myPci{
@@ -155,6 +156,29 @@ void blinkLED(struct timer_list *list){
 	else
 		mod_timer(&blinkTimer, (HZ/blink_rate)+jiffies);
 
+}
+
+static irqreturn_t my_irq_handler(int irq, void* data){
+
+	//Reset interrupts.
+	writel(0xFFFF, myPci.hw_addr + IMC);
+
+	schedule_work(&mydev.handler); 
+	
+	return IRQ_HANDLED;
+}
+
+static void my_work(struct work_struct* work){
+	
+	printk(KERN_INFO "Service task triggered!!\n",tail);
+
+	if(readl(myPci.hw_addr + ICR) | (1<<13)){
+		printk(KERN_INFO "ICR correct!\n",tail);
+	}
+
+	//Set interrupt
+	writel((1 << 13), myPci.hw_addr + IMR);
+	
 }
 
 void initSettings(void){
@@ -283,6 +307,9 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	//Initialize settings values for later wrties.
 	initSettings();
 
+	//Prep work queue
+	INIT_WORK(&mydev.work, my_work);
+
 	//Get BAR mask.
 	barMask = pci_select_bars(pdev, IORESOURCE_MEM);
 	printk(KERN_INFO "Barmask: %lx\n", barMask);
@@ -318,28 +345,14 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	//writel((uint32_t)dRing, myPci.hw_addr + RDT); //Set tail pointer to beginning of ring.
 	writel(RCTL_SET.set, myPci.hw_addr + RCTL); //Start reception and set operating parameters.
 
-	//TEST
-	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
-	printk(KERN_INFO "RDBAL Offset: %lx\n", RDBAL);
-	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDBAL);
-	printk(KERN_INFO "Wrote: %lx\n\n", (uint32_t)dRing);
-	//TEST//TEST
-	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
-	printk(KERN_INFO "RDBAH Offset: %lx\n", RDBAH);
-	printk(KERN_INFO "Total: %lx\n", myPci.hw_addr + RDBAH);
-	printk(KERN_INFO "Wrote: %lx\n\n", ((uint32_t)dRing >> 32));
-	//TEST//TEST
-	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
-	printk(KERN_INFO "RDLEN Offset: %lx\n", RDLEN);
-	printk(KERN_INFO "Total: %lx\n\n", myPci.hw_addr + RDLEN);
-	//TEST//TEST
-	printk(KERN_INFO "BAR: %lx\n", myPci.hw_addr);
-	printk(KERN_INFO "RCTL Offset: %lx\n", RCTL);
-	printk(KERN_INFO "Total: %lx\n\n", myPci.hw_addr + RCTL);
-	//TEST
-
 	//Turn on LED0.
 	writel(zeroOn, myPci.hw_addr + 0x00E00);
+
+	//Prep irq
+	request_irq(, my_irq_handler, NULL, "myCharDev",&myDev);
+
+	//Set interrupt
+	writel((1 << 13), myPci.hw_addr + IMR);
 
 	//Everything seems fine, blinky time.
 	//myDev.led_initial_val = readl(myPci.hw_addr + 0x00E00);
