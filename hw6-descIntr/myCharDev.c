@@ -339,8 +339,9 @@ static int pci_blinkDriver_probe(struct pci_dev* pdev, const struct pci_device_i
 	pci_enable_device(pdev);
 
 	//Reset and set CTRL
-	writel((1 << 26) & (1<<8) & (1<<9) & (1<<11),myPci.hw_addr+CTRL);
+	writel((1 << 26),myPci.hw_addr+CTRL);
 	msleep(1);
+	writel((1<<8) & (1<<9) & (1<<11),myPci.hw_addr+CTRL);
 
 	//Reset interrupts.
 	writel(0xFFFF, myPci.hw_addr + IMC);
