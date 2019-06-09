@@ -163,21 +163,21 @@ static irqreturn_t my_irq_handler(int irq, void* data){
 	//Reset interrupts.
 	writel(0xFFFF, myPci.hw_addr + IMC);
 
-	schedule_work(&mydev.handler); 
+	schedule_work(&myDev.handler); 
 	
 	return IRQ_HANDLED;
 }
 
 static void my_work(struct work_struct* work){
 	
-	printk(KERN_INFO "Service task triggered!!\n",tail);
+	printk(KERN_INFO "Service task triggered!!\n");
 
 	if(readl(myPci.hw_addr + ICR) | (1<<13)){
-		printk(KERN_INFO "ICR correct!\n",tail);
+		printk(KERN_INFO "ICR correct!\n");
 	}
 
 	//Set interrupt
-	writel((1 << 13), myPci.hw_addr + IMR);
+	writel((1 << 13), myPci.hw_addr + IMS);
 	
 }
 
